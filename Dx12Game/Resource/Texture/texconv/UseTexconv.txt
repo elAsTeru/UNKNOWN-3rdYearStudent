@@ -1,0 +1,2 @@
+// 通常
+.\texconv.exe -f BC1_UNORM baseTexture\画像名.形式

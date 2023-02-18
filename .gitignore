@@ -348,3 +348,36 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+
+# 「.gitignore」の無視ファイルを否定設定
+# テスト用モデル
+!/Dx12Game/Resource/model/cube.obj
+!/Dx12Game/Resource/model/teapot.obj
+!/Dx12Game/Resource/model/tank.obj
+!/Dx12Game/Resource/model/shot.obj
+# ゲーム用モデル
+!/Dx12Game/Resource/model/fighter.obj
+!/Dx12Game/Resource/model/doughnut.obj
+!/Dx12Game/Resource/model/board.obj
+!/Dx12Game/Resource/model/geobox.obj
+!/Dx12Game/Resource/model/geotriangle.obj
+!/Dx12Game/Resource/model/Bullet.obj
+!/Dx12Game/Resource/model/randomCube.obj
+!/Dx12Game/Resource/model/randomArrow.obj
+!/Dx12Game/Resource/model/reverserHead.obj
+!/Dx12Game/Resource/model/reverserTail.obj
+!/Dx12Game/Resource/model/cubeHole.obj
+!/Dx12Game/Resource/model/hole.obj
+!/Dx12Game/Resource/model/Sphere.obj
+!/Dx12Game/Resource/model/crack.obj
+
+# ライブラリ(ビルドデータ)
+!/Lib/Debug
+!/Lib/Release
+
+# csoを除外
+/Dx12Game/Shader/cso/
+# exeを除外
+/Dx12Game/Dx12Game.exe
+#dllを除外
+/Dx12Game/assimp-vc142-mtd.dll

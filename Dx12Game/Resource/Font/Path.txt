@@ -1,0 +1,17 @@
+〇補助用の記事
+https://qiita.com/katsusanw/items/c42b737d8d91d903474a
+→オプション
+アスキー文字		/CharacterRegion:32-126
+ひらがなカタカナ	/CharacterRegion:0x3000-0x30ff
+記号			/CharacterRegion:0xff01-0xffe5
+全角漢字		/CharacterRegion:0x4e00-0x9fff
+全角特殊記号		/CharacterRegion:0x2000-0x2fff
+
+〇LED Digital 7
+Desktop\repository\DirectXTK\MakeSpriteFont\bin\Release\MakeSpriteFont "LED Digital 7" LED7.spritefont /FontSize:128 /FontStyle:Bold
+
+〇Impact
+Desktop\repository\DirectXTK\MakeSpriteFont\bin\Release\MakeSpriteFont "Impact" Impact.spritefont /FontSize:128 /FontStyle:Bold
+
+〇メイリオ
+Desktop\repository\DirectXTK\MakeSpriteFont\bin\Release\MakeSpriteFont "メイリオ" meirio.spritfont /FontSize:64 /FontStyle:Bold /CharacterRegion:32-126 /CharacterRegion:0x3000-0x30ff 	/CharacterRegion:0xff01-0xffe5
