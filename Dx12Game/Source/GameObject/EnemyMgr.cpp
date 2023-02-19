@@ -15,7 +15,7 @@ namespace GameObject
 	EnemyMgr::EnemyMgr() :
 		Base(Tag::Untagged, "EnemyMgr"),
 		spawnCount(0),
-		phaseCount(3),
+		phaseCount(0),
 		enemyData()
 	{
 	}
