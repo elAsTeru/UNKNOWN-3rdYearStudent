@@ -11,10 +11,10 @@ namespace GameObject
         RectMgr();
         ~RectMgr();
         // Public Method
-        void Start(){}
         void Init(){}
-        void Update();
-        void Draw();
+        void Update()override;
+        void Draw()const override;
+
         void Run() { remainingRunNum = RunNum; }
 
         // Private Variable

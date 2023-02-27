@@ -11,7 +11,8 @@ namespace GameObject
 
 		void Start() {}
 		void Init()override {}
-		void Update();
+		void Update()override;
+		void Draw()const override;
 		const float Delay;			// 処理開始を遅延させる
 		const float Duration;		// 処理時間
 		const float MaxScale;		// 最大サイズ
@@ -36,7 +37,6 @@ namespace GameObject
 		int selectNum;				// 選択番号
 		float magnificationScale;	// 拡大率
 		// Private Method
-		void Draw();
 		void UpdateSelectNum();
 		void UpdateSelectRect();
 

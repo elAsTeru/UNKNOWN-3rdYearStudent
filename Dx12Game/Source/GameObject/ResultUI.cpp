@@ -7,7 +7,7 @@ static constexpr XMVECTOR COLOR_ORANGE = { 1, 0.65f, 0, 0.1f };
 namespace GameObject
 {
 	ResultUI::ResultUI() :
-		Base(Tag::UI, "ResultUI"),
+		Base(Tag::Ui, "ResultUI"),
 		MaxDigits(7),
 		eliminate(),
 		life(),
@@ -32,32 +32,7 @@ namespace GameObject
 		Draw();
 	}
 
-	void ResultUI::SetEliminateScore(const std::wstring _Score)
-	{
-		this->eliminate = _Score;
-	}
-
-	void ResultUI::SetLifeScore(const std::wstring _Score)
-	{
-		this->life = _Score;
-	}
-
-	void ResultUI::SetPhaseScore(const std::wstring _Score)
-	{
-		this->phase = _Score;
-	}
-
-	void ResultUI::SetBossScore(const std::wstring _Score)
-	{
-		this->boss = _Score;
-	}
-
-	void ResultUI::SetTotalScore(const std::wstring _Score)
-	{
-		this->total = _Score;
-	}
-
-	void ResultUI::Draw()
+	void ResultUI::Draw() const
 	{
 		// スコア影の表示
 		MyDX::Dx12Wrapper::DrawFont({ L"RESULT", DirectX::XMFLOAT2(300, 185), {0.05f, 0.05f, 0.05f, 1},{},{},0.8f });
@@ -66,7 +41,7 @@ namespace GameObject
 		MyDX::Dx12Wrapper::DrawFont({ L"Eliminate", DirectX::XMFLOAT2(450, 295), {0.05f, 0.05f, 0.05f, 1},{},{},0.5f });
 		MyDX::Dx12Wrapper::DrawFont({ L"Eliminate", DirectX::XMFLOAT2(450, 290), {1, 0.65f, 0, 1},{},{},0.5f });
 
-		MyDX::Dx12Wrapper::DrawFont({ this->eliminate, DirectX::XMFLOAT2(540, 365), {0.05f, 0.05f, 0.05f, 1},{},{},0.5f});
+		MyDX::Dx12Wrapper::DrawFont({ this->eliminate, DirectX::XMFLOAT2(540, 365), {0.05f, 0.05f, 0.05f, 1},{},{},0.5f });
 		MyDX::Dx12Wrapper::DrawFont({ this->eliminate, DirectX::XMFLOAT2(540, 360), {1, 0.65f, 0, 1},{},{},0.5f });
 
 		MyDX::Dx12Wrapper::DrawFont({ L"Life", DirectX::XMFLOAT2(450, 435), {0.05f, 0.05f, 0.05f, 1},{},{},0.5f });
@@ -96,17 +71,42 @@ namespace GameObject
 		// 上から下
 		XMMATRIX matrix
 			= Matrix::CreateTranslation(0, 0, 1.25);
-		MyDX::Dx12Wrapper::Draw2DUI({ matrix,MyRes::MeshType::Board,6,0.4f });
+		MyDX::Dx12Wrapper::Draw2DUI({ matrix,Res::MeshType::Board,Res::MaterialType::Gray,0.4f });
 		// 下から上
 		matrix
 			= Matrix::CreateTranslation(0, 0, -1.25);
-		MyDX::Dx12Wrapper::Draw2DUI({ matrix,MyRes::MeshType::Board,6,0.4f });
+		MyDX::Dx12Wrapper::Draw2DUI({ matrix,Res::MeshType::Board,Res::MaterialType::Gray,0.4f });
 		// 黒板
 		matrix
 			= Matrix::CreateScale(1);
-		MyDX::Dx12Wrapper::Draw2DUI({ matrix,MyRes::MeshType::Board,10,0.8 });
+		MyDX::Dx12Wrapper::Draw2DUI({ matrix,Res::MeshType::Board,Res::MaterialType::Black,0.8 });
 
 		MyDX::Dx12Wrapper::DrawFont({ L"Ⓐ 戻る", DirectX::XMFLOAT2(140, 970), COLOR_ORANGE,{},{},0.5f });
+	}
+
+	void ResultUI::SetEliminateScore(const std::wstring _Score)
+	{
+		this->eliminate = _Score;
+	}
+
+	void ResultUI::SetLifeScore(const std::wstring _Score)
+	{
+		this->life = _Score;
+	}
+
+	void ResultUI::SetPhaseScore(const std::wstring _Score)
+	{
+		this->phase = _Score;
+	}
+
+	void ResultUI::SetBossScore(const std::wstring _Score)
+	{
+		this->boss = _Score;
+	}
+
+	void ResultUI::SetTotalScore(const std::wstring _Score)
+	{
+		this->total = _Score;
 	}
 
 	void ResultUI::FillLeftZero(std::wstring& _WstrValue, const int& _Digits)

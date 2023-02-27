@@ -34,8 +34,8 @@ PSOutput Phong(VSOutput _Input)
 	PSOutput output = (PSOutput)0;
 
 	float3 N = normalize(_Input.Normal);
-	float3 L = normalize(LightPosition - _Input.WorldPos);
-    float3 V = normalize(CameraPosition - _Input.WorldPos);							//(Phong‚Å’Ç‰Á)
+	float3 L = normalize(LightPosition - _Input.WorldPos.xyz);
+    float3 V = normalize(CameraPosition - _Input.WorldPos.xyz);							//(Phong‚Å’Ç‰Á)
 
     float3 R = normalize(-reflect(V, N));											//(Phong‚Å’Ç‰Á)
 	

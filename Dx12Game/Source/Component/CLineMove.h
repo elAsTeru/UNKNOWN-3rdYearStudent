@@ -80,7 +80,7 @@ namespace Component
 		/// <returns></returns>
 		bool MoveLineLerp()
 		{
-			timeCounter += MySys::Timer::GetDeltaTime();
+			timeCounter += Sys::Timer::GetDeltaTime();
 			// 線形補間移動を行う
 			this->parent->transform->position = Vector3::Lerp(this->p1, this->p2, this->timeCounter / this->duration);
 			// 2点間の移動にかかる時間を超えた場合

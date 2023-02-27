@@ -2,19 +2,21 @@
 #include "ScoreUI.h"
 #include "ResultUI.h"
 #include "Player.h"
+#include "Helper/EnumIterator.h"
 
 //スコア倍率
-static const int SCORE_MAGNIFICATION_THROUGH	  = 2500;	// 直進敵
-static const int SCORE_MAGNIFICATION_SLOWTRACKER  = 1500;	// 追跡敵
-static const int SCORE_MAGNIFICATION_AVOIDTRACKER = 4000;	// 追跡敵、弾除け
-static const int SCORE_MAGNIFICATION_MISSILE		= 50;	// ミサイル
-static const int SCORE_MAGNIFICATION_LIFE		  = 10000;	// 残機
-static const int SCORE_MAGNIFICATION_PHASE		  = 5000;	// クリアフェーズ数
-static const int SCORE_MAGNIFICATION_BOSS		  = 300000;	// ボス
+static const int SCORE_MAGNIFICATION_THROUGH		= 2500;		// 直進敵
+static const int SCORE_MAGNIFICATION_SLOWTRACKER	= 1500;		// 追跡敵
+static const int SCORE_MAGNIFICATION_AVOIDTRACKER	= 4000;		// 追跡敵、弾除け
+static const int SCORE_MAGNIFICATION_MISSILE		= 50;		// ミサイル
+static const int SCORE_MAGNIFICATION_LIFE			= 10000;	// 残機
+static const int SCORE_MAGNIFICATION_PHASE			= 5000;		// クリアフェーズ数
+static const int SCORE_MAGNIFICATION_BOSS			= 300000;	// ボス
 
-static const int SCORE_MAGNIFICATION_REVERSER = 0;			// 反転敵
-static const int SCORE_MAGNIFICATION_RANDER = 0;			// 反転敵
-static const int SCORE_MAGNIFICATION_TRACKER = 0;			// 反転敵
+// ↓出てこない
+static const int SCORE_MAGNIFICATION_REVERSER		= 0;		// 反転敵
+static const int SCORE_MAGNIFICATION_RANDER			= 0;		// ランダム移動敵
+static const int SCORE_MAGNIFICATION_TRACKER		= 0;		// 追尾敵
 
 static const int TOP_RECORD_NUM = 3;	// トップ記録数
 
@@ -63,25 +65,25 @@ namespace MyObj
 	void Score::Init()
 	{
 		// 各スコア倍率を設定
-		singleton->scoreMagnification[MyRes::ScoreType::Thurough]		= SCORE_MAGNIFICATION_THROUGH;
-		singleton->scoreMagnification[MyRes::ScoreType::SlowTracker]	= SCORE_MAGNIFICATION_SLOWTRACKER;
-		singleton->scoreMagnification[MyRes::ScoreType::AvoidTracker]	= SCORE_MAGNIFICATION_AVOIDTRACKER;
-		singleton->scoreMagnification[MyRes::ScoreType::LifeNum]		= SCORE_MAGNIFICATION_LIFE;
-		singleton->scoreMagnification[MyRes::ScoreType::Phase]			= SCORE_MAGNIFICATION_PHASE;
-		singleton->scoreMagnification[MyRes::ScoreType::Rander]			= SCORE_MAGNIFICATION_RANDER;
-		singleton->scoreMagnification[MyRes::ScoreType::Reverser]		= SCORE_MAGNIFICATION_REVERSER;
-		singleton->scoreMagnification[MyRes::ScoreType::Tracker]		= SCORE_MAGNIFICATION_TRACKER;
-		singleton->scoreMagnification[MyRes::ScoreType::Missile]		= SCORE_MAGNIFICATION_MISSILE;
-		singleton->scoreMagnification[MyRes::ScoreType::Boss]			= SCORE_MAGNIFICATION_BOSS;
+		singleton->scoreMagnification[Res::ScoreType::Thurough]		= SCORE_MAGNIFICATION_THROUGH;
+		singleton->scoreMagnification[Res::ScoreType::SlowTracker]	= SCORE_MAGNIFICATION_SLOWTRACKER;
+		singleton->scoreMagnification[Res::ScoreType::AvoidTracker]	= SCORE_MAGNIFICATION_AVOIDTRACKER;
+		singleton->scoreMagnification[Res::ScoreType::LifeNum]		= SCORE_MAGNIFICATION_LIFE;
+		singleton->scoreMagnification[Res::ScoreType::Phase]		= SCORE_MAGNIFICATION_PHASE;
+		singleton->scoreMagnification[Res::ScoreType::Rander]		= SCORE_MAGNIFICATION_RANDER;
+		singleton->scoreMagnification[Res::ScoreType::Reverser]		= SCORE_MAGNIFICATION_REVERSER;
+		singleton->scoreMagnification[Res::ScoreType::Tracker]		= SCORE_MAGNIFICATION_TRACKER;
+		singleton->scoreMagnification[Res::ScoreType::Missile]		= SCORE_MAGNIFICATION_MISSILE;
+		singleton->scoreMagnification[Res::ScoreType::Boss]			= SCORE_MAGNIFICATION_BOSS;
 	}
 
 	void Score::Reset()
 	{
-		// スコアリセット
-		for (auto type = MyRes::ScoreType::Begin; type != MyRes::ScoreType::End; ++type)
+		// スコアリセット、倒した数を0にする
+		typedef System::Helper::EnumIterator < Res::ScoreType, Res::ScoreType::Begin, Res::ScoreType::End > typeItr;
+		for (auto itr = typeItr(); itr != typeItr(Res::ScoreType::End); ++itr)
 		{
-			// 倒した数を0にする
-			singleton->scoreData[type] = 0;
+			singleton->scoreData[*itr] = 0;
 		}
 		singleton->scoreUI->Init();
 	}
@@ -89,7 +91,7 @@ namespace MyObj
 	int const Score::GetTotalScore()
 	{
 		// 総合スコアをリセットする
-		singleton->scoreData[MyRes::ScoreType::Total] = 0;
+		singleton->scoreData[Res::ScoreType::Total] = 0;
 		// 総合スコアを求める
 		CalcTotalScore();
 
@@ -100,46 +102,46 @@ namespace MyObj
 		//	for (auto rank : topScore)
 		//	{
 		//		// スコアが越えていたら
-		//		if (rank <= scoreData[MyRes::ScoreType::Total])
+		//		if (rank <= scoreData[Res::ScoreType::Total])
 		//		{
 		//			// 元々あったスコアで最下位を上書きし
-		//			rank = scoreData[MyRes::ScoreType::Total];
+		//			rank = scoreData[Res::ScoreType::Total];
 		//		}
 		//	}
 		//}
 
-		return singleton->scoreData[MyRes::ScoreType::Total];
+		return singleton->scoreData[Res::ScoreType::Total];
 	}
 
 	const int Score::GetEliminateScore()
 	{
 		int score
-			= CalcScore(MyRes::ScoreType::Thurough)
-			+ CalcScore(MyRes::ScoreType::SlowTracker)
-			+ CalcScore(MyRes::ScoreType::AvoidTracker);
+			= CalcScore(Res::ScoreType::Thurough)
+			+ CalcScore(Res::ScoreType::SlowTracker)
+			+ CalcScore(Res::ScoreType::AvoidTracker);
 
 		return score;
 	}
 
-	void Score::AddEliminateNum(const MyRes::ScoreType _Type)
+	void Score::AddEliminateNum(const Res::ScoreType _Type)
 	{
 		singleton->scoreData[_Type] += 1;
 
 		// スコアUIに渡すデータ
 		std::wstring name = L"";
-		if (_Type == MyRes::ScoreType::Thurough)
+		if (_Type == Res::ScoreType::Thurough)
 		{
 			name = L"rht";
 		}
-		else if (_Type == MyRes::ScoreType::SlowTracker)
+		else if (_Type == Res::ScoreType::SlowTracker)
 		{
 			name = L"sart";
 		}
-		else if (_Type == MyRes::ScoreType::AvoidTracker)
+		else if (_Type == Res::ScoreType::AvoidTracker)
 		{
 			name = L"aart";
 		}
-		else if (_Type == MyRes::ScoreType::Missile)
+		else if (_Type == Res::ScoreType::Missile)
 		{
 			name = L"msil";
 		}
@@ -179,13 +181,13 @@ namespace MyObj
 	{
 		// スコアの反映
 		// 残機スコア
-		singleton->scoreData[MyRes::ScoreType::LifeNum] = 0;
+		singleton->scoreData[Res::ScoreType::LifeNum] = 0;
 		for(int i = 0;i<_PlayerLifeCount;++i)
-		{ AddEliminateNum(MyRes::ScoreType::LifeNum); }
+		{ AddEliminateNum(Res::ScoreType::LifeNum); }
 		// フェーズスコア
-		singleton->scoreData[MyRes::ScoreType::Phase] = 0;
+		singleton->scoreData[Res::ScoreType::Phase] = 0;
 		for (int i = 0; i < _ClearPhaseCount; ++i)
-		{ AddEliminateNum(MyRes::ScoreType::Phase); }
+		{ AddEliminateNum(Res::ScoreType::Phase); }
 		// 総スコアを計算
 		CalcTotalScore();
 
@@ -196,20 +198,20 @@ namespace MyObj
 		InsertComma(score);
 		singleton->resultUI->SetEliminateScore(score);
 		// 残機スコア
-		score = std::to_wstring(CalcScore(MyRes::ScoreType::LifeNum));
+		score = std::to_wstring(CalcScore(Res::ScoreType::LifeNum));
 		InsertComma(score);
 		singleton->resultUI->SetLifeScore( score);
 		// フェーズスコア
-		score = std::to_wstring(CalcScore(MyRes::ScoreType::Phase));
+		score = std::to_wstring(CalcScore(Res::ScoreType::Phase));
 		InsertComma(score);
 		singleton->resultUI->SetPhaseScore(score);
 		// ボス討伐スコア
-		score = std::to_wstring(CalcScore(MyRes::ScoreType::Boss));
+		score = std::to_wstring(CalcScore(Res::ScoreType::Boss));
 		InsertComma(score);
 		singleton->resultUI->SetBossScore(score);
 
 		// 総合スコア
-		score = std::to_wstring(singleton->scoreData[MyRes::ScoreType::Total]);
+		score = std::to_wstring(singleton->scoreData[Res::ScoreType::Total]);
 		InsertComma(score);
 		singleton->resultUI->SetTotalScore(score);
 	}
@@ -219,17 +221,18 @@ namespace MyObj
 		singleton->resultUI->Update();
 	}
 
-	int Score::CalcScore(MyRes::ScoreType _Type)
+	int Score::CalcScore(Res::ScoreType _Type)
 	{
 		return singleton->scoreData[_Type] * singleton->scoreMagnification[_Type];
 	}
 
 	void Score::CalcTotalScore()
 	{
-		singleton->scoreData[MyRes::ScoreType::Total] = 0; // 重複防止
-		for (auto type = MyRes::ScoreType::Begin; type != MyRes::ScoreType::End; ++type)
+		singleton->scoreData[Res::ScoreType::Total] = 0; // 重複防止の為リセットする
+		typedef System::Helper::EnumIterator < Res::ScoreType, Res::ScoreType::Begin, Res::ScoreType::End > typeItr;
+		for (auto itr = typeItr(); itr != typeItr(Res::ScoreType::End); ++itr)
 		{
-			singleton->scoreData[MyRes::ScoreType::Total] += CalcScore(type);
+			singleton->scoreData[Res::ScoreType::Total] += CalcScore(*itr);
 		}
 	}
 

@@ -90,7 +90,7 @@ namespace State::Boss
             }
             else
             {
-                this->fireTimeCounter += MySys::Timer::GetHitStopTime();
+                this->fireTimeCounter += Sys::Timer::GetHitStopTime();
             }
         }
 

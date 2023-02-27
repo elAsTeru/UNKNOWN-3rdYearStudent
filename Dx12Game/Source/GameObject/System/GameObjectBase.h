@@ -11,12 +11,6 @@
 #include "Score.h"
 #include "Sound.h"
 
-//#define MAX_RIGHT	28.0f
-//#define MAX_DEPTH	14.8f
-
-#define MAX_RIGHT	16 * 2.0f		// 画面比率 * 倍率
-#define MAX_DEPTH	 9 * 2.0f
-
 //// 可動性
 //enum class Mobility
 //{
@@ -35,11 +29,12 @@ namespace GameObject
 		Base(Tag _Tag, std::string _Name);
 		virtual ~Base();
 		// Public Basic Method
-		virtual void Start(){}										// 開始(生成時に呼ばれる)
-		virtual void Init() = 0;									// 初期化
-		virtual void Update() = 0;									// 更新
-		virtual void OnTriggerEnter(Base* _Other) {}		// 当たり判定を追加していたら実行される
-		template<class T> T* GetComponent()							// コンポーネントを取得
+		virtual void Start(){}							// 開始(生成時に呼ばれる)
+		virtual void Init() = 0;						// 初期化
+		virtual void Update() = 0;						// 更新
+		virtual void Draw()const = 0;					// 描画
+		virtual void OnTriggerEnter(Base* _Other) {}	// 当たり判定を追加していたら実行される
+		template<class T> T* GetComponent()				// コンポーネントを取得
 		{
 			for (auto com : componentList)
 			{

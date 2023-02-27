@@ -29,7 +29,7 @@ namespace Component
 			auto temp = MyMath::AngleToVecs2LH(this->parent->transform->rotation.y);
 			Vector3 unitDir(temp.x, 0, temp.y);
 			// 移動速度を乗算して移動
-			this->parent->transform->position += unitDir * this->speed * MySys::Timer::GetHitStopTime();
+			this->parent->transform->position += unitDir * this->speed * Sys::Timer::GetHitStopTime();
 		}
 	};
 }

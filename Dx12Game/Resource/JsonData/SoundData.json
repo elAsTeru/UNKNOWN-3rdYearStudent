@@ -5,7 +5,7 @@
             "Volume": 0.4
         },
         "2": {
-            "Path": "Resource/Sound/SE/decision.wav",
+            "Path": "Resource/Sound/SE/enter.wav",
             "Volume": 0.2
         },
         "3": {
@@ -59,7 +59,7 @@
             "Volume": 0.2
         },
         "6": {
-            "Path": "Resource/Sound/SE/invisible.wav",
+            "Path": "Resource/Sound/SE/reflect.wav",
             "Volume": 0.05
         }
     }

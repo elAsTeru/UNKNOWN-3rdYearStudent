@@ -9,7 +9,7 @@ static constexpr XMVECTOR COLOR_PURPLE = { 0.20f, 0.15f, 0.25f, 1.0f };
 namespace GameObject
 {
 	SelectUI::SelectUI() :
-		Base(Tag::UI, "SelectUI"),
+		Base(Tag::Ui, "SelectUI"),
 		Delay(1),
 		Duration(1),
 		MaxScale(5.0f),
@@ -35,7 +35,7 @@ namespace GameObject
 		if (this->state == State::In)
 		{
 			// 計測時間が処理遅延を超えたら
-			if (this->timeCounter += MySys::Timer::GetDeltaTime(); this->timeCounter >= this->Delay)
+			if (this->timeCounter += Sys::Timer::GetDeltaTime(); this->timeCounter >= this->Delay)
 			{
 				// 枠を縮小させながら3つ並べる
 				this->expan = std::lerp(this->MaxScale, 1, (this->timeCounter -this->Delay) /this->Duration);
@@ -72,7 +72,7 @@ namespace GameObject
 			if ((Input::Mgr::GetPadLog().a == DirectX::GamePad::ButtonStateTracker::RELEASED)
 				|| (Input::Mgr::GetKeyLog().IsKeyReleased(DirectX::Keyboard::Enter)))
 			{
-				MyObj::Sound::Play(2, false, true);	//選択決定SE
+				MyObj::Sound::PlaySE(Res::SEType::Enter);
 
 				this->timeCounter = 0;
 				this->state = State::Out;
@@ -82,14 +82,14 @@ namespace GameObject
 			if ((Input::Mgr::GetPadLog().start == DirectX::GamePad::ButtonStateTracker::PRESSED)
 				|| (Input::Mgr::GetKeyLog().IsKeyReleased(DirectX::Keyboard::Escape)))
 			{
-				MyObj::Sound::Play(2, false, true);	//選択決定SE
+				MyObj::Sound::PlaySE(Res::SEType::Enter);
 				Scene::Mgr::Quit();
 			}
 		}
 		else
 		{
 			// 計測時間が処理遅延を超えたら
-			if (this->timeCounter += MySys::Timer::GetDeltaTime(); this->timeCounter >= this->Delay)
+			if (this->timeCounter += Sys::Timer::GetDeltaTime(); this->timeCounter >= this->Delay)
 			{
 				// 枠を拡大しながら１つにする
 				this->expan = std::lerp( 1, this->MaxScale, (this->timeCounter - this->Delay) / this->Duration);
@@ -121,12 +121,12 @@ namespace GameObject
 		{
 			Scene::Mgr::LoadScene("Title");
 		}
-		noInputTime += MySys::Timer::GetDeltaTime();
+		noInputTime += Sys::Timer::GetDeltaTime();
 
 		Draw();
 	}
 
-	void SelectUI::Draw()
+	void SelectUI::Draw() const
 	{
 		// 左、中央、右の３つの枠を表示
 		for (int i = 0; i < 3; ++i)
@@ -191,7 +191,7 @@ namespace GameObject
 		// 上から下
 		XMMATRIX matrix
 			= Matrix::CreateTranslation(0, 0, 1.25 + (0.2f * this->expan) - 0.2f);
-		MyDX::Dx12Wrapper::Draw2DUI({ matrix,MyRes::MeshType::Board,6,0.4f });
+		MyDX::Dx12Wrapper::Draw2DUI({ matrix,Res::MeshType::Board,Res::MaterialType::Gray,0.4f });
 		
 		MyDX::Dx12Wrapper::DrawFont({ L"UNKNOWN", DirectX::XMFLOAT2(140, 2 - (100 * this->expan) + 100), COLOR_ORANGE,{},{},1 });
 		MyDX::Dx12Wrapper::DrawFont({ L"㊂", DirectX::XMFLOAT2(1750, 2 - (100 * this->expan) + 100), COLOR_ORANGE,{},{},1 });
@@ -199,7 +199,7 @@ namespace GameObject
 		// 下から上
 		matrix
 			= Matrix::CreateTranslation(0,0,-1.25 - (0.2f * this->expan) + 0.2f);
-		MyDX::Dx12Wrapper::Draw2DUI({ matrix,MyRes::MeshType::Board,6,0.4f });
+		MyDX::Dx12Wrapper::Draw2DUI({ matrix,Res::MeshType::Board,Res::MaterialType::Gray,0.4f });
 
 		MyDX::Dx12Wrapper::DrawFont({ L"⇦ 選択 ⇨　Ⓐ 決定", DirectX::XMFLOAT2(140, 970 + (100 * this->expan) - 100), COLOR_ORANGE,{},{},0.5f });
 	}
@@ -212,7 +212,7 @@ namespace GameObject
 		{
 			this->slideTimeCounter = 0.0f;
 			this->noInputTime = 0.0f;
-			MyObj::Sound::Play(1, false, true);	//選択変更SE
+			MyObj::Sound::PlaySE(Res::SEType::Select);
 			// 選択番号を更新後、0を下回ったら2にする
 			if (--this->selectNum; this->selectNum < 0)
 			{
@@ -225,7 +225,7 @@ namespace GameObject
 		{
 			this->slideTimeCounter = 0.0f;
 			this->noInputTime = 0.0f;
-			MyObj::Sound::Play(1, false, true);	//選択変更SE
+			MyObj::Sound::PlaySE(Res::SEType::Select);
 			// 選択番号を更新後、2を上回ったら0にする
 			if (++this->selectNum; this->selectNum > 2)
 			{
@@ -239,7 +239,7 @@ namespace GameObject
 		// 選択されている番号の枠の位置と、選択を示す枠の場所が違うなら
 		if (this->selectRectX != this->rectPos[this->selectNum].x)
 		{
-			this->slideTimeCounter += MySys::Timer::GetDeltaTime();
+			this->slideTimeCounter += Sys::Timer::GetDeltaTime();
 			// 現在選択されている枠への線形補間移動を行う
 			this->selectRectX = std::lerp(this->selectRectX, this->rectPos[this->selectNum].x, this->slideTimeCounter / this->SlideDuration);
 			// 所要時間を越えていたら
@@ -253,7 +253,7 @@ namespace GameObject
 		{
 			this->slideTimeCounter = 0;
 			// 円運動を利用して選択枠の拡大率を変更する
-			this->timeCounter += MySys::Timer::GetDeltaTime();
+			this->timeCounter += Sys::Timer::GetDeltaTime();
 			this->magnificationScale = MyMath::CircularMotion(0.98f, 1.0f, this->timeCounter, 15.0f);
 		}
 	}

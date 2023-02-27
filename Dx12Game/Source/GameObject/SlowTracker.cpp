@@ -1,5 +1,5 @@
 ﻿#include "SlowTracker.h"
-#include "EffekseerMgr.h"
+#include "EfkMgr.h"
 
 #include <cmath>
 
@@ -51,16 +51,11 @@ namespace GameObject
 			= Matrix::CreateRotationY(transform->rotation.y + modelDir)
 			* Matrix::CreateTranslation(transform->position.x, 0, transform->position.z);
 
-		MyDX::Dx12Wrapper::DrawBasicMesh({ transform->matrix,MyRes::MeshType::Tracker,7 });
+	}
 
-		//if (this->mode == Mode::Spawn)
-		//{
-		//	XMMATRIX matrix
-		//		= Matrix::CreateScale(spawnScale)
-		//		* transform->matrix;
-
-		//	MyDX::Dx12Wrapper::DrawTransMesh({ matrix,MyRes::MeshType::Tracker,2 });
-		//}
+	void SlowTracker::Draw() const
+	{
+		MyDX::Dx12Wrapper::DrawBasicMesh({ transform->matrix,Res::MeshType::Tracker,Res::MaterialType::Red });
 	}
 
 	void SlowTracker::Init()
@@ -74,10 +69,10 @@ namespace GameObject
 	void SlowTracker::Eliminate()
 	{
 		// 死亡エフェクト再生
-		Effect::EffekseerMgr::PlayEffect(MyRes::EfkType::Explosion, this->transform->position, false);
+		Effect::EfkMgr::PlayEffect(Res::EfkType::Explosion, this->transform->position, false);
 		// スコアを加算する
-		MyObj::Score::AddEliminateNum(MyRes::ScoreType::SlowTracker);
-		MyObj::Sound::Play(6, false, true);	// 敵死亡SE
+		MyObj::Score::AddEliminateNum(Res::ScoreType::SlowTracker);
+		MyObj::Sound::PlaySE(Res::SEType::Eliminate);
 		// 自信を非アクティブにする
 		this->SetActive(false);
 	}
@@ -85,7 +80,7 @@ namespace GameObject
 	void SlowTracker::Spawn()
 	{
 		// 時間を計測
-		this->timeCounter += MySys::Timer::GetHitStopTime();
+		this->timeCounter += Sys::Timer::GetHitStopTime();
 
 		float interval = SpawnDuration / ExpanRunNum;	// 間隔 = 実行時間 / 実行回数
 		// 拡大率を設定

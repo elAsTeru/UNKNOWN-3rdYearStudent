@@ -9,9 +9,9 @@ namespace GameObject
 		ResultUI();
 		~ResultUI();
 
-		void Start() {}
 		void Init()override {}
-		void Update();
+		void Update()override;
+		void Draw()const override;
 		void SetEliminateScore(const std::wstring _Score);
 		void SetLifeScore(const std::wstring _Score);
 		void SetPhaseScore(const std::wstring _Score);
@@ -29,7 +29,7 @@ namespace GameObject
 		std::wstring total;		// 総合スコア
 
 		// Private Method
-		void Draw();
+
 		/// <summary>
 		/// 元データが指定した桁数に満たない場合左側を0で埋める
 		/// </summary>

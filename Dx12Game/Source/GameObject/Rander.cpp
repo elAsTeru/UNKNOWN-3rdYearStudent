@@ -1,11 +1,17 @@
 ﻿#include "Rander.h"
 #include <cmath>
+#include "SphereCollider.h"
+#include "CFixPos.h"
+
 
 namespace GameObject
 {
 	Rander::Rander():
 		Base(Tag::Enemy, "Rander"),
 		mode(Mode::Spawn),
+		sphColl(AddComponent<Component::SphColl>()),
+		subTrans(AddComponent<Component::Transform>()),
+		cFixPos(AddComponent<Component::CFixPos>()),
 		MaxSpawnScale(2),
 		SpawnDuration(1),
 		ExpanRunNum(4),
@@ -16,12 +22,7 @@ namespace GameObject
 		ActionTime(0.5f),
 		timeCounter(0.0f)
 	{
-		// あたり判定の追加
-		sphColl = AddComponent<Component::SphColl>();
 		sphColl->radius = 1.0f;
-
-		// 追加の座標系
-		subTrans = AddComponent<Component::Transform>();
 	}
 
 	Rander::~Rander()
@@ -38,7 +39,8 @@ namespace GameObject
 
 	void Rander::Update()
 	{
-		FixPosFromStage();
+		this->cFixPos->Update();
+
 		if (mode == Mode::Spawn)
 		{
 			Spawn();
@@ -55,33 +57,23 @@ namespace GameObject
 		// 通常枠メッシュ
 		transform->matrix
 			= Matrix::CreateTranslation(transform->position.x, transform->position.y, transform->position.z);
-		MyDX::Dx12Wrapper::DrawBasicMesh({ transform->matrix, MyRes::MeshType::Rander, 7 });
 		// 通常矢印メッシュ
 		subTrans->matrix
 			= Matrix::CreateRotationY(MyMath::ToRadians(subTrans->rotation.y))
 			* transform->matrix;
-		MyDX::Dx12Wrapper::DrawBasicMesh({ subTrans->matrix, MyRes::MeshType::Arrow , 11 });
+	}
 
-		//if (mode == Mode::Spawn)
-		//{
-		//	// 透過枠メッシュ
-		//	XMMATRIX matrix
-		//		= Matrix::CreateScale({ spawnScale })
-		//		* Matrix::CreateTranslation(transform->position);
-		//	MyDX::Dx12Wrapper::DrawTransMesh({ matrix, MyRes::MeshType::Rander, 2 });
-		//	// 透過矢印メッシュ
-		//	matrix
-		//		= Matrix::CreateRotationY(MyMath::ToRadians(subTrans->rotation.y))
-		//		* matrix;
-		//	MyDX::Dx12Wrapper::DrawTransMesh({ matrix, MyRes::MeshType::Arrow, 3 });
-		//}
+	void Rander::Draw() const
+	{
+		MyDX::Dx12Wrapper::DrawBasicMesh({ transform->matrix, Res::MeshType::Rander, Res::MaterialType::Red });
+		MyDX::Dx12Wrapper::DrawBasicMesh({ subTrans->matrix, Res::MeshType::Arrow , Res::MaterialType::Purple });
 	}
 
 	void Rander::Eliminate()
 	{
 		// スコアを加算する
-		MyObj::Score::AddEliminateNum(MyRes::ScoreType::Rander);
-		MyObj::Sound::Play(6, false, true);		// 敵死亡SE
+		MyObj::Score::AddEliminateNum(Res::ScoreType::Rander);
+		MyObj::Sound::PlaySE(Res::SEType::Eliminate);
 		// 自信を非アクティブにする
 		SetActive(false);
 	}
@@ -100,13 +92,13 @@ namespace GameObject
 
 	void Rander::Move()
 	{
-		timeCounter += MySys::Timer::GetDeltaTime();
+		timeCounter += Sys::Timer::GetDeltaTime();
 
 		// 行動待機
 		if (!isAction)
 		{
 			// 矢印を回転する
-			subTrans->rotation.y += 1000.0f * MySys::Timer::GetDeltaTime();
+			subTrans->rotation.y += 1000.0f * Sys::Timer::GetDeltaTime();
 
 			// 経過時間が次に動けるまでの時間を過ぎていたら
 			if (timeCounter >= IdolDuration)
@@ -131,8 +123,8 @@ namespace GameObject
 				moveValue = timeCounter / ActionTime * MoveSpeed;
 			}
 
-			transform->position.x -= static_cast<float>(x * moveValue * MySys::Timer::GetDeltaTime());
-			transform->position.z -= static_cast<float>(z * moveValue * MySys::Timer::GetDeltaTime());
+			transform->position.x -= static_cast<float>(x * moveValue * Sys::Timer::GetDeltaTime());
+			transform->position.z -= static_cast<float>(z * moveValue * Sys::Timer::GetDeltaTime());
 
 			if (timeCounter >= ActionTime)
 			{
@@ -142,36 +134,10 @@ namespace GameObject
 		}
 	}
 
-	void Rander::FixPosFromStage()
-	{
-		// 画面外に出ていたら戻す
-		// 右
-		if (transform->position.x >= MAX_RIGHT)
-		{
-			transform->position.x = static_cast<float>(MAX_RIGHT - 0.1f);
-		}
-		// 左
-		else if (transform->position.x <= -MAX_RIGHT)
-		{
-			transform->position.x = static_cast<float>(-MAX_RIGHT + 0.1f);
-		}
-
-		// 上
-		if (transform->position.z >= MAX_DEPTH)
-		{
-			transform->position.z = static_cast<float> (MAX_DEPTH - 0.1f);
-		}
-		// 下
-		else if (transform->position.z <= -MAX_DEPTH)
-		{
-			transform->position.z = static_cast<float>(-MAX_DEPTH + 0.1);
-		}
-	}
-
 	void Rander::Spawn()
 	{
 		// 時間を計測
-		timeCounter += MySys::Timer::GetDeltaTime();
+		timeCounter += Sys::Timer::GetDeltaTime();
 
 		float interval = SpawnDuration / ExpanRunNum;	// 間隔 = 実行時間 / 実行回数
 		// 拡大率を設定

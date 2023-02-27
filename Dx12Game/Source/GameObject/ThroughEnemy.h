@@ -14,8 +14,9 @@ namespace GameObject
 		bool isInvincible;		// ?無敵か?
 
 		// Public Method
-		void Update()override;
 		void Init()override;
+		void Update()override;
+		void Draw()const override;
 		void Eliminate();
 
 	private:

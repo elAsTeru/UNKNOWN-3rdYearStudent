@@ -27,16 +27,8 @@ namespace GameObject
 
 	void Rader::Update()
 	{
-		//sphColl->DebugUpdate();
-
 		// 除け敵の移動方向に設置
 		this->transform->position = forceNorVec3 * 2 + parentObj->transform->position;
-
-	/*	this->transform->position
-			= parentObj->transform->rotation
-			* parentObj->transform->position;*/
-
-		//parentObj->transform->position;
 	}
 
 	void Rader::Init()
@@ -71,19 +63,15 @@ namespace GameObject
 			if (dir > 0.0f)
 			{
 				parentObj->Avoid(1);
-				//OutputLog("左 : ");
 			}
 			else if (dir < 0.0f)
 			{
 				parentObj->Avoid(-1);
-				//OutputLog("右 : ");
 			}
 			else
 			{
 				parentObj->Avoid(0);
-				//OutputLog("平行 : ");
 			}
-			//OutputLog("%f\n", dir);
 		}
 	}
 }

@@ -11,6 +11,7 @@
 
 #include "CubeGenerator.h"
 #include "CLineMove.h"
+#include "Helper/EnumIterator.h"
 
 namespace Scene
 {
@@ -24,7 +25,7 @@ namespace Scene
 	{
 		GameObject::Mgr::DeactivateAll();
 
-		bgmHandle = MyObj::Sound::Play(12, true, true);	// ステージBGM再生
+		MyObj::Sound::PlayBGM(Res::BGMType::Game);
 
 		auto rectMgr = static_cast<GameObject::RectMgr*>(GameObject::Mgr::Find("RectMgr"));
 		rectMgr->SetActive(true);
@@ -98,13 +99,11 @@ namespace Scene
 
 		delete enemyMgr;
 		enemyMgr = nullptr;
-
-		MyObj::Sound::Stop(12, bgmHandle);	// タイトルBGM停止
 	}
 
 	void Stage::Update()
 	{
-		this->timeCounter += MySys::Timer::GetDeltaTime();		// 経過時間
+		this->timeCounter += Sys::Timer::GetDeltaTime();		// 経過時間
 
 		if (this->state == State::In)
 		{
@@ -154,18 +153,19 @@ namespace Scene
 
 			MyObj::Score::DrawScore();	// 右上のスコア表示
 
-
+			// 画面下のフェーズ表示
 			uint8_t phaseNum = enemyMgr->GetClearPhaseNum();
-
+			System::Helper::EnumIterator<Res::MaterialType, Res::MaterialType::Phase1, Res::MaterialType::Phase4>typeItr;
+			typeItr.Incriment(phaseNum);
 			XMMATRIX phaseMat
 				= Matrix::CreateScale(0.05f)
 				* Matrix::CreateTranslation(0.0f, 0.0f, -0.32f);
-			MyDX::Dx12Wrapper::Draw2DUI({ phaseMat,MyRes::MeshType::Board,16 + phaseNum,1.0f });
+			MyDX::Dx12Wrapper::Draw2DUI({ phaseMat,Res::MeshType::Board,*typeItr,1.0f });
 			
 		}
 		else if (this->state == State::Result)
 		{
-			//MySys::Timer::RunHitStop();	// 敵・プレイヤーの動作を停止させる
+			//Sys::Timer::RunHitStop();	// 敵・プレイヤーの動作を停止させる
 
 			MyObj::Score::CalcResult(enemyMgr->GetClearPhaseNum(), player->GetLifeNum());
 			MyObj::Score::DrawResult();

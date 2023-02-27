@@ -1,4 +1,7 @@
 ﻿#pragma once
+// -----------------------------
+// キューブを一定間隔で生成する
+// -----------------------------
 #include "GameObjectBase.h"
 
 namespace Component
@@ -19,7 +22,8 @@ namespace GameObject
 		void Start() {}
 		void Init()override;
 		void Update()override;
-		void Draw();
+		void Draw()const override;
+
 		void SetInterval(const float _Time);
 
 		Component::CLineMove* cLineMove;

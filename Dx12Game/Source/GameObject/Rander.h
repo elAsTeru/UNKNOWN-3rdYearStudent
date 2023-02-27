@@ -1,9 +1,17 @@
 ﻿#pragma once
 #include "GameObjectBase.h"
-#include "SphereCollider.h"
+
+namespace Component
+{
+	class CFixPos;
+	class SphColl;
+}
 
 namespace GameObject
 {
+	/// <summary>
+	/// タイトルのみで使用、旧型式のオブジェクト
+	/// </summary>
 	class Rander : public Base
 	{
 	public:
@@ -13,6 +21,8 @@ namespace GameObject
 		// Public Override Method
 		void Init()override;
 		void Update()override;
+		void Draw()const override;
+
 		void Eliminate();
 	private:
 		enum class Mode : unsigned char
@@ -44,13 +54,14 @@ namespace GameObject
 		/// </summary>
 		/// <param name="_SplitNum">分割数(例:4なら360を4分割した、0,90,180,270が出る)</param>
 		const float CreateRandomDir(int _SplitNum);
-		void Move();			// 移動
-		void FixPosFromStage();		// ステージから出ないようにする
+		void Move();				// 移動
 		void Spawn();
 
 		// Component Variable
+
 		Component::SphColl* sphColl;		// 球の当たり判定
 		Component::Transform* subTrans;		// 矢印用の座標系
+		Component::CFixPos* cFixPos;
 
 		// Componet Method
 		void OnTriggerEnter(Base* _Other)override;

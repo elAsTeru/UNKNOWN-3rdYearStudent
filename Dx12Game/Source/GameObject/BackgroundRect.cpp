@@ -6,6 +6,8 @@
 
 namespace GameObject
 {
+	const Vector4 Purple(0.2f, 0.15f, 0.25f, 1.0f);
+
 	BackgroundRect::BackgroundRect() :
 		Base(Tag::BackGround, "BackgroundRect")
 	{
@@ -21,11 +23,13 @@ namespace GameObject
 
 	void BackgroundRect::Update()
 	{
+		// リストに追加していないのでここで描画
+		Draw();
 	}
 
-	void BackgroundRect::Draw()
+	void BackgroundRect::Draw() const
 	{
-		// 自身のY座標からα価を設定する(0~-の値を0~1の値にする)
+		// 自身のY座標からα値を設定する(0~-の値を0~1の値にする)
 		float alpha = 1.0f;
 		if (parent)
 		{
@@ -39,7 +43,7 @@ namespace GameObject
 			= Matrix::CreateScale(transform->scale)
 			* Matrix::CreateTranslation(transform->position);
 
-		DirectX::XMFLOAT4 color{ 51 / 255.0f,38 / 255.0f,64 / 255.0f, alpha };
+		Vector4 color(Purple.x, Purple.y, Purple.z, alpha);
 
 		MyDX::Dx12Wrapper::DrawRect(transform->matrix, color);
 	}

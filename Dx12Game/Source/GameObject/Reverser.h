@@ -2,6 +2,14 @@
 #include "GameObjectBase.h"
 #include "SphereCollider.h"
 
+namespace Component
+{
+	class CFixPos;
+}
+
+/// <summary>
+/// 旧型式、タイトルのみで使用
+/// </summary>
 namespace GameObject
 {
 	class Reverser : public Base
@@ -10,8 +18,9 @@ namespace GameObject
 		Reverser();
 		~Reverser();
 
-		void Update()override;
 		void Init()override;
+		void Update()override;
+		void Draw()const override;
 		void Eliminate();
 	private:
 		enum class Mode : unsigned char
@@ -49,9 +58,13 @@ namespace GameObject
 		Vector3 MoveForward(const Vector3 _Rotation, const float _Speed);		// 向いている方向に移動する処理 // 未実装
 
 		// Component Variable
+
 		Component::SphColl* sphColl;
 		Component::Transform* subTrans;		// ジェット部分用の座標系
+		Component::CFixPos* cFixPos;
+
 		// Component Method
+
 		void OnTriggerEnter(Base* _Other) override;
 	};
 }

@@ -7,12 +7,15 @@
 #include "CSpawn.h"
 #include "CRotYAimPos.h"
 
-#include "EffekseerMgr.h"
+#include "EfkMgr.h"
 
 // プレイヤーの残機増加処理はスコアの加算処理内にある
 
 namespace GameObject
 {
+	const float VibrationWeak = 0.4f;
+	const float VibrationStrong = 0.8f;
+
 	Player::Player() :
 		Base(Tag::Player, "Player"),
 		MaxSpeed(20),
@@ -47,7 +50,7 @@ namespace GameObject
 
 		this->cMover->speed = this->MaxSpeed;		// 操作に移動速度を渡す
 
-		this->cSpawn->meshType = MyRes::MeshType::Player;
+		this->cSpawn->meshType = Res::MeshType::Player;
 		this->cSpawn->textureID = 1;
 		this->cSpawn->duration = 0.4f;
 		this->cSpawn->maxScale = 2;
@@ -64,7 +67,7 @@ namespace GameObject
 			{
 				this->cRotYAimPos->aimPos = this->transform->position + Vector3(axis.x, 0, axis.y);
 				this->cRotYAimPos->Update();
-				efkHandle = Effect::EffekseerMgr::PlayEffect(MyRes::EfkType::Track,this->transform->position, false, this->transform->rotation);
+				efkHandle = Effect::EfkMgr::PlayEffect(Res::EfkType::Track,this->transform->position, false, this->transform->rotation);
 			}
 			this->cFixPos->Update();	// 移動処理後、フィールドから出てた場合、補正する
 			this->cBullet->Update();	// 射撃処理
@@ -75,14 +78,14 @@ namespace GameObject
 			// 移動処理と、移動してた場合正面を向く処理
 			if (Vector2 axis = this->cMover->Update(); axis != Vector2::Zero)
 			{
-				efkHandle = Effect::EffekseerMgr::PlayEffect(MyRes::EfkType::Track, this->transform->position, false, this->transform->rotation);
+				efkHandle = Effect::EfkMgr::PlayEffect(Res::EfkType::Track, this->transform->position, false, this->transform->rotation);
 			}
 			this->cFixPos->Update();	// 移動処理後、フィールドから出てた場合、補正する
 			this->cBullet->Update();	// 射撃処理
 
 			// ↓↓↓HIT状態の時のみ行う処理
-			this->timeCounter += MySys::Timer::GetDeltaTime();
-			Input::Mgr::GetPad()->SetVibration(0, 0.4f, 0.4f);
+			this->timeCounter += Sys::Timer::GetDeltaTime();
+			Input::Mgr::GetPad()->SetVibration(0, VibrationWeak, VibrationWeak);
 
 			// 点滅させる
 			if (this->timeCounter >= 0.1f)
@@ -116,15 +119,15 @@ namespace GameObject
 			}
 			else if (magnification == 1)
 			{
-				Effect::EffekseerMgr::PlayEffect(MyRes::EfkType::Spawn, this->transform->position, false, this->transform->rotation);
-				MyObj::Sound::Play(3, false, true);	// プレイヤーの生成SE
+				Effect::EfkMgr::PlayEffect(Res::EfkType::Spawn, this->transform->position, false, this->transform->rotation);
+				MyObj::Sound::PlaySE(Res::SEType::Generate);
 			}
 		}
 		else if (this->state == State::Eliminate)
 		{
-			this->timeCounter += MySys::Timer::GetHitStopTime();
-			Input::Mgr::GetPad()->SetVibration(0, 0.8f, 0.8f);
-			Effect::EffekseerMgr::SetPlaySpeed(this->elimiEfkHandle, MySys::Timer::GetHitStopTime() * 100.0f);
+			this->timeCounter += Sys::Timer::GetHitStopTime();
+			Input::Mgr::GetPad()->SetVibration(0, VibrationStrong, VibrationStrong);
+			Effect::EfkMgr::SetPlaySpeed(this->elimiEfkHandle, Sys::Timer::GetHitStopTime() * 100.0f);
 			// 点滅させる
 			if (this->timeCounter >= 0.1f)
 			{
@@ -143,6 +146,10 @@ namespace GameObject
 			}
 		}
 
+	}
+
+	void Player::Draw() const
+	{
 		if (this->isVisible)
 		{
 			// モデルの向き調整分
@@ -151,21 +158,26 @@ namespace GameObject
 				= Matrix::CreateRotationY(this->transform->rotation.y + modelDir)
 				* Matrix::CreateTranslation(this->transform->position);
 
-			MyDX::Dx12Wrapper::DrawBasicMesh({ this->transform->matrix, MyRes::MeshType::Player, 2 });
+			MyDX::Dx12Wrapper::DrawBasicMesh({ this->transform->matrix, Res::MeshType::Player, Res::MaterialType::Orange });
 			MyDX::Dx12Wrapper::SetPlayerPos(this->transform->position);
 		}
 
+		float lifeUIScale = 0.05f;
+		Vector3 lifeUIPos(-0.03f, 0, 0.28f);
+		Vector2 lifeNumFontPos(960.0f, 40.0f);
+		float lifeNumFontScale = 0.5f;
+
 		XMMATRIX uiMatrix
-			= Matrix::CreateScale({ 0.05f })
-			* Matrix::CreateTranslation(-0.03f, 0, 0.28f);
+			= Matrix::CreateScale(lifeUIScale)
+			* Matrix::CreateTranslation(lifeUIPos);
 
 		std::wstring lifeWstr = std::to_wstring(this->life);
 
 		if (this->life >= 0)
 		{
 			// UI仮置き
-			MyDX::Dx12Wrapper::Draw2DUI({ uiMatrix,MyRes::MeshType::Board,8 });
-			MyDX::Dx12Wrapper::DrawFont({ lifeWstr.c_str(), DirectX::XMFLOAT2(960, 40), {1,1,1,1},{},{},0.5 });
+			MyDX::Dx12Wrapper::Draw2DUI({ uiMatrix,Res::MeshType::Board,Res::MaterialType::U });
+			MyDX::Dx12Wrapper::DrawFont({ lifeWstr.c_str(), lifeNumFontPos, {1,1,1,1},{},{},lifeNumFontScale });
 		}
 	}
 
@@ -181,7 +193,7 @@ namespace GameObject
 		{
 			// 連続で判定を受けないようにfalseに
 			this->sphColl->isEnable = false;	// 当たり判定無効化
-			MyObj::Sound::Play(4, false, true);	// プレイヤー死亡SE
+			MyObj::Sound::PlaySE(Res::SEType::Died);
 
 			// 残機を減らして、0以上なら継続
 			if (--this->life; life >= 0)
@@ -191,8 +203,8 @@ namespace GameObject
 			// そうでなければ終了処理
 			else
 			{
-				MySys::Timer::RunHitStop();		// ヒットストップ処理開始
-				this->elimiEfkHandle = Effect::EffekseerMgr::PlayEffect(MyRes::EfkType::PlayerEliminate, this->transform->position, false);
+				Sys::Timer::RunHitStop();		// ヒットストップ処理開始
+				this->elimiEfkHandle = Effect::EfkMgr::PlayEffect(Res::EfkType::PlayerEliminate, this->transform->position, false);
 				this->state = State::Eliminate;
 			}
 		}

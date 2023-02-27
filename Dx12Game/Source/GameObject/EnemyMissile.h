@@ -1,4 +1,7 @@
 ﻿#pragma once
+// -----------------------------
+// 敵のミサイル
+// -----------------------------
 #include "GameObjectBase.h"
 
 namespace Component
@@ -21,6 +24,9 @@ namespace GameObject
 
 		void Start() {}
 		void Init()override;
+		void Update()override;
+		void Draw()const override;
+
 
 	private:
 		// Private Const Variable
@@ -33,8 +39,7 @@ namespace GameObject
 		float speed;
 		float timeCounter;
 		float rot;
-		// Private Method
-		void Update();
+		XMMATRIX subMatrix;
 
 		// Component Variable
 		Component::SphColl* sphColl;

@@ -118,7 +118,7 @@ namespace State::Boss
             }
             else
             {
-                this->fireTimeCounter += MySys::Timer::GetHitStopTime();
+                this->fireTimeCounter += Sys::Timer::GetHitStopTime();
             }
         }
 
@@ -134,7 +134,7 @@ namespace State::Boss
 
             this->activateTimeCounter = 0.0f;
         }
-        this->activateTimeCounter += MySys::Timer::GetHitStopTime();
+        this->activateTimeCounter += Sys::Timer::GetHitStopTime();
 
         // レーザーを張った場合広い方へ避ける
         // シールドがコアを追跡

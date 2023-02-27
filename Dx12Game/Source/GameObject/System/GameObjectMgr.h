@@ -17,9 +17,10 @@ namespace GameObject
 
 	public:
 		//Public Methods
-		static void OnInit();							// 一度のみ初期化
-		static void OnTerm();							// 終了
-		static void Update();							// 更新
+		static void OnInit();	// 一度のみ初期化
+		static void OnTerm();	// 終了
+		static void Update();	// 更新
+		static void Draw();		// 描画
 
 		/// <summary>
 		/// 対象のTag内のアクティブなオブジェクト数を返却する

@@ -10,7 +10,7 @@ enum class Tag : unsigned char
 	Enemy,
 	Bullet,
 	BackGround,
-	UI,
+	Ui,
 	//Camera,
 	//Effect,
 

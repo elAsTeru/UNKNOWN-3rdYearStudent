@@ -3,8 +3,12 @@
 #include "GameObjectBase.h"
 #include "InputMgr.h"
 
+const float MaxRight = 16 * 2.0f;		// 画面比率 * 倍率
+const float MaxDepth = 9 * 2.0f;
+
 namespace Component
 {
+
 	class CFixPos : public Base
 	{
 	public:
@@ -21,28 +25,40 @@ namespace Component
 
 			// 画面外に出ていたら戻す
 			// 右
-			if (parent->transform->position.x >= MAX_RIGHT)
+			if (parent->transform->position.x >= MaxRight)
 			{
-				parent->transform->position.x = static_cast<float>(MAX_RIGHT - 0.1f);
+				if (this->isEnable)
+				{
+					parent->transform->position.x = static_cast<float>(MaxRight - 0.1f);
+				}
 				isRun = true;
 			}
 			// 左
-			else if (parent->transform->position.x <= -MAX_RIGHT)
+			else if (parent->transform->position.x <= -MaxRight)
 			{
-				parent->transform->position.x = static_cast<float>(-MAX_RIGHT + 0.1f);
+				if (this->isEnable)
+				{
+					parent->transform->position.x = static_cast<float>(-MaxRight + 0.1f);
+				}
 				isRun = true;
 			}
 
 			// 上
-			if (parent->transform->position.z >= MAX_DEPTH)
+			if (parent->transform->position.z >= MaxDepth)
 			{
-				parent->transform->position.z = static_cast<float> (MAX_DEPTH - 0.1f);
+				if (this->isEnable)
+				{
+					parent->transform->position.z = static_cast<float> (MaxDepth - 0.1f);
+				}
 				isRun = true;
 			}
 			// 下
-			else if (parent->transform->position.z <= -MAX_DEPTH)
+			else if (parent->transform->position.z <= -MaxDepth)
 			{
-				parent->transform->position.z = static_cast<float>(-MAX_DEPTH + 0.1);
+				if (this->isEnable)
+				{
+					parent->transform->position.z = static_cast<float>(-MaxDepth + 0.1);
+				}
 				isRun = true;
 			}
 			return isRun;

@@ -9,9 +9,10 @@ namespace GameObject
 		TitleUI();
 		~TitleUI();
 
-		void Start() {}
 		void Init()override {}
-		void Update();
+
+		void Update()override;
+		void Draw()const override;
 
 		// Constant Variable
 		const float FirstBlinkSpeed;	// 初期点滅速度
@@ -32,7 +33,5 @@ namespace GameObject
 		float timeCounter;	// 時間計測
 		float blinkSpeed;	// 点滅速度
 		Vector4 blinkColor;	// 点滅時の色
-		// Private Method
-		void Draw();
 	};
 }

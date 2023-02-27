@@ -9,7 +9,7 @@ namespace Component
 	{
 	public:
 		// Public Variable
-		MyRes::MeshType meshType;	// メッシュの種類
+		Res::MeshType meshType;	// メッシュの種類
 		int textureID;				// テクスチャID
 		float delay;				// 発生遅延
 		float duration;				// 持続時間
@@ -36,7 +36,7 @@ namespace Component
 			if (this->remaining > 0)
 			{
 				// 発生遅延時間を越えてなければ処理を終了
-				if(this->elapsed += MySys::Timer::GetDeltaTime(); this->elapsed < this->delay)
+				if(this->elapsed += Sys::Timer::GetDeltaTime(); this->elapsed < this->delay)
 				{ return 0; }
 
 				// 現在の拡大率を求める

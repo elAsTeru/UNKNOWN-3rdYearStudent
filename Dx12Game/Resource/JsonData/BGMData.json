@@ -1,0 +1,18 @@
+{
+    "0": {
+        "Path": "Resource/Sound/BGM/title.wav",
+        "Volume": 0.2
+    },
+    "1": {
+        "Path": "Resource/Sound/BGM/select.wav",
+        "Volume": 0.2
+    },
+    "2": {
+        "Path": "Resource/Sound/BGM/game.wav",
+        "Volume": 0.2
+    },
+    "3": {
+        "Path": "Resource/Sound/BGM/result.wav",
+        "Volume": 0.2
+    }
+}

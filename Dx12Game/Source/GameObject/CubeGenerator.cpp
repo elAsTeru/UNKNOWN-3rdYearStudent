@@ -32,18 +32,16 @@ namespace GameObject
 	{
 		this->cLineMove->Update();
 		this->cGenerator->Update();
-
-		Draw();
 	}
 
-	void CubeGenerator::Draw()
+	void CubeGenerator::Draw() const
 	{
 		// デバッグ時のみ可視化
 #if defined(DEBUG) || (_DEBUG)
 		this->transform->matrix
 			= Matrix::CreateScale(this->transform->scale)
 			* Matrix::CreateTranslation(this->transform->position);
-		MyDX::Dx12Wrapper::DrawBasicMesh({ this->transform->matrix, MyRes::MeshType::Sphere , 1 });
+		MyDX::Dx12Wrapper::DrawBasicMesh({ this->transform->matrix, Res::MeshType::Sphere , Res::MaterialType::White });
 #endif
 	}
 

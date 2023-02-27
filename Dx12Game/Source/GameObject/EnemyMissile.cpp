@@ -2,7 +2,7 @@
 
 #include "MeshMgr.h"
 #include "SphereCollider.h"
-#include "EffekseerMgr.h"
+#include "EfkMgr.h"
 #include "SphereCollider.h"
 #include "CRotYAimPos.h"
 #include "CMoveForwardY.h"
@@ -40,7 +40,7 @@ namespace GameObject
 
 	void EnemyMissile::Update()
 	{
-		if (this->timeCounter += MySys::Timer::GetHitStopTime(); this->timeCounter >= this->InvalidCollDuration)
+		if (this->timeCounter += Sys::Timer::GetHitStopTime(); this->timeCounter >= this->InvalidCollDuration)
 		{
 			this->sphColl->isEnable = true;
 		}
@@ -58,12 +58,16 @@ namespace GameObject
 			= Matrix::CreateScale(this->transform->scale)
 			* Matrix::CreateRotationY(this->transform->rotation.y + modelDir)
 			* Matrix::CreateTranslation(this->transform->position);
-		MyDX::Dx12Wrapper::DrawBasicMesh({ this->transform->matrix,MyRes::MeshType::Missile,7 });
 
-		Matrix subMat
-			= Matrix::CreateRotationZ(rot += this->RotSpeed * MySys::Timer::GetDeltaTime())
+		this->subMatrix
+			= Matrix::CreateRotationZ(rot += this->RotSpeed * Sys::Timer::GetDeltaTime())
 			* this->transform->matrix;
-		MyDX::Dx12Wrapper::DrawBasicMesh({ subMat,MyRes::MeshType::Tail,7 });
+	}
+
+	void EnemyMissile::Draw() const
+	{
+		MyDX::Dx12Wrapper::DrawBasicMesh({ this->transform->matrix,Res::MeshType::Missile,Res::MaterialType::Red });
+		MyDX::Dx12Wrapper::DrawBasicMesh({ subMatrix,Res::MeshType::Tail,Res::MaterialType::Red });
 	}
 
 	void EnemyMissile::OnTriggerEnter(Base* _Other)
@@ -71,24 +75,24 @@ namespace GameObject
 		// プレイヤーかプレイヤーの弾にhitしたら
 		if (_Other->tag == Tag::Player)
 		{
-			Effect::EffekseerMgr::PlayEffect(MyRes::EfkType::Explosion2, this->transform->position, false);
-			MyObj::Sound::Play(14, false, true);
+			Effect::EfkMgr::PlayEffect(Res::EfkType::Explosion2, this->transform->position, false);
+			MyObj::Sound::PlaySE(Res::SEType::Bomb);
 			// 自分を非アクティブに
 			SetActive(false);
 		}
 		else if (_Other->name == "Boss")
 		{
-			Effect::EffekseerMgr::PlayEffect(MyRes::EfkType::Explosion2, this->transform->position, false);
-			MyObj::Sound::Play(14, false, true);
+			Effect::EfkMgr::PlayEffect(Res::EfkType::Explosion2, this->transform->position, false);
+			MyObj::Sound::PlaySE(Res::SEType::Bomb);
 			// 自分を非アクティブに
 			SetActive(false);
 		}
 		else if (_Other->name == "Bullet")
 		{
 			// スコアを加算する
-			MyObj::Score::AddEliminateNum(MyRes::ScoreType::Missile);
-			Effect::EffekseerMgr::PlayEffect(MyRes::EfkType::Hit, this->transform->position, false);
-			MyObj::Sound::Play(6, false, true);
+			MyObj::Score::AddEliminateNum(Res::ScoreType::Missile);
+			Effect::EfkMgr::PlayEffect(Res::EfkType::Hit, this->transform->position, false);
+			MyObj::Sound::PlaySE(Res::SEType::Eliminate);
 			// 自分を非アクティブに
 			SetActive(false);
 		}

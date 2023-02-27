@@ -8,6 +8,7 @@
 #include "CRotYAimPos.h"
 #include "CMoveAimPos.h"
 #include "CTransformRingBuff.h"
+#include "MaterialType.h"
 
 #include "Logger.h"
 #include "Laser.h"
@@ -24,10 +25,6 @@ namespace GameObject
 		ScaleTrackingShield(2.2f),
 		DurationShieldCrack(5.0f),
 		DurationDamageColor(0.1f),
-		NumMatWhite(1),
-		NumMatBlue(13),
-		NumMatYellow(12),
-		NumMatRed(7),
 		sphColl(AddComponent<Component::SphColl>()),
 		cFixPos(AddComponent<Component::CFixPos>()),
 		cMoveForwardY(AddComponent<Component::CMoveForwardY>()),
@@ -56,7 +53,7 @@ namespace GameObject
 		this->rotShieldRot = 0.0f;
 		this->nowState = State::Boss::StateList();
 		this->nextState = this->nowState;
-		this->matNum = this->NumMatBlue;
+		this->matType = Res::MaterialType::Blue;
 		this->damageTimeCounter = 0.0f;
 		this->hp = this->FirstHp;
 		this->isInvisible = false;
@@ -84,32 +81,32 @@ namespace GameObject
 		// ステート外部からステート変更があったか？
 		if (this->nowState != this->nextState)
 		{
-			this->statePools[static_cast<uint8_t>(this->nextState)]->Enter(this, MySys::Timer::GetDeltaTime());
+			this->statePools[static_cast<uint8_t>(this->nextState)]->Enter(this, Sys::Timer::GetDeltaTime());
 			this->nowState = this->nextState;
 			return;
 		}
 		// ステート実行
-		this->nextState = statePools[static_cast<uint8_t>(this->nowState)]->Update(this, MySys::Timer::GetDeltaTime());
+		this->nextState = statePools[static_cast<uint8_t>(this->nowState)]->Update(this, Sys::Timer::GetDeltaTime());
 		// ステート内部からステート変更があったか?
 		if (this->nowState != this->nextState)
 		{
-			this->statePools[static_cast<uint8_t>(this->nextState)]->Enter(this, MySys::Timer::GetDeltaTime());
+			this->statePools[static_cast<uint8_t>(this->nextState)]->Enter(this, Sys::Timer::GetDeltaTime());
 			this->nowState = this->nextState;
 		}
 
 		//// 停止処理
 		if (this->waitTime > 0.0f)
 		{
-			this->waitTime -= MySys::Timer::GetHitStopTime();
+			this->waitTime -= Sys::Timer::GetHitStopTime();
 		}
 
 		//// 追加処理
-		this->cRingBuff->Update(MySys::Timer::GetHitStopTime());	// リングバッファの更新
+		this->cRingBuff->Update(Sys::Timer::GetHitStopTime());	// リングバッファの更新
 		// 追跡シールドが有効時、シールドがひび割れ状態なら
 		if (this->trackingShields.size() && this->trackingShields[0]->IsCrack())
 		{
 			// 継続時間を経過していたら修復する
-			if (this->crackTimeCounter += MySys::Timer::GetHitStopTime(); this->crackTimeCounter >= this->DurationShieldCrack)
+			if (this->crackTimeCounter += Sys::Timer::GetHitStopTime(); this->crackTimeCounter >= this->DurationShieldCrack)
 			{
 				this->trackingShields[0]->Repair();
 				this->crackTimeCounter = 0.0f;
@@ -118,23 +115,25 @@ namespace GameObject
 		}
 
 		// ダメージカラーから通常カラーに戻す
-		if (this->matNum == this->NumMatWhite)
+		if (this->matType == Res::MaterialType::White)
 		{
-			if (this->damageTimeCounter += MySys::Timer::GetHitStopTime(); this->damageTimeCounter >= this->DurationDamageColor)
+			if (this->damageTimeCounter += Sys::Timer::GetHitStopTime(); this->damageTimeCounter >= this->DurationDamageColor)
 			{
 				float percentage = this->GetHpPercentage();
-				// 体力が５割よりあれば
-				if (percentage > 50.0f)
+				float half = 50.0f;		// 半分
+				float quarter = 25.0f;	// ４分の１
+				// 体力の割合によって色を変更する
+				if (percentage > half)
 				{
-					this->matNum = this->NumMatBlue;
+					this->matType = Res::MaterialType::Blue;
 				}
-				else if (percentage > 25.0f)
+				else if (percentage > quarter)
 				{
-					this->matNum = this->NumMatYellow;
+					this->matType = Res::MaterialType::Yellow;
 				}
 				else
 				{
-					this->matNum = this->NumMatRed;
+					this->matType = Res::MaterialType::Red;
 				}
 				this->damageTimeCounter = 0;
 			}
@@ -142,20 +141,24 @@ namespace GameObject
 
 
 		// コア描画
-		this->rotCore += 2 * MySys::Timer::GetHitStopTime();
+		this->rotCore += 2 * Sys::Timer::GetHitStopTime();
 		this->transform->matrix
 			= Matrix::CreateScale(this->transform->scale)
 			* Matrix::CreateRotationX(this->rotCore)
 			* Matrix::CreateRotationY(this->rotCore)
 			* Matrix::CreateRotationZ(this->rotCore)
 			* Matrix::CreateTranslation(this->transform->position);
+	}
+
+	void Boss::Draw() const
+	{
 		if (this->nowState != State::Boss::StateList::PHASE1)
 		{
-			MyDX::Dx12Wrapper::DrawBasicMesh({ transform->matrix,MyRes::MeshType::GeoBox,this->matNum });
+			MyDX::Dx12Wrapper::DrawBasicMesh({ transform->matrix,Res::MeshType::GeoBox,this->matType });
 		}
 		else
 		{
-			MyDX::Dx12Wrapper::DrawBasicMesh({ transform->matrix,MyRes::MeshType::Sphere,this->matNum });
+			MyDX::Dx12Wrapper::DrawBasicMesh({ transform->matrix,Res::MeshType::Sphere,this->matType });
 		}
 	}
 
@@ -230,7 +233,7 @@ namespace GameObject
 	void Boss::RotShields(const float& _Speed)
 	{
 		Vector3 targetPos = this->transform->position + Vector3(3, 0, 3);	// 目標座標
-		this->rotShieldRot += MySys::Timer::GetHitStopTime() * _Speed;		// 移動速度にデルタタイムを乗算
+		this->rotShieldRot += Sys::Timer::GetHitStopTime() * _Speed;		// 移動速度にデルタタイムを乗算
 
 		for (uint8_t i = 0; i < this->rotShields.size(); ++i)
 		{
@@ -440,12 +443,12 @@ namespace GameObject
 
 	void Boss::Damage()
 	{
-		MyObj::Sound::Play(9, false, true);	// ボスダメージSE
+		MyObj::Sound::PlaySE(Res::SEType::Damage);
 		// HPが0より多ければ
 		if (this->hp > 0)
 		{
 			// 色を変更
-			this->matNum = NumMatWhite;
+			this->matType = Res::MaterialType::White;
 			// HPを減らす
 			--this->hp;
 		}

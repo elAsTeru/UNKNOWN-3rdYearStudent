@@ -3,7 +3,7 @@
 #include "ScoreType.h"
 #include <unordered_map>
 
-namespace MyRes
+namespace Res
 {
 	enum class ScoreType;
 }
@@ -32,7 +32,7 @@ namespace MyObj
 		static const int GetTotalScore();											// 総合スコアを取得
 		static const int GetEliminateScore();										// 敵を倒したときのスコア
 		static const std::list<int> GetTopScore() { return singleton->topScore; }	// トップ3のスコアを取得
-		static void AddEliminateNum(const MyRes::ScoreType _Type);					// 敵の討伐数などを加算する
+		static void AddEliminateNum(const Res::ScoreType _Type);					// 敵の討伐数などを加算する
 
 		// UI系
 		static void DrawScore();
@@ -40,10 +40,10 @@ namespace MyObj
 		static void DrawResult();
 	private:
 		// Private Variable
-		std::unordered_map<MyRes::ScoreType, int> scoreData;			// スコア表示用の値を格納
-		std::unordered_map<MyRes::ScoreType, int> scoreMagnification;	// スコア倍率を格納
+		std::unordered_map<Res::ScoreType, int> scoreData;			// スコア表示用の値を格納
+		std::unordered_map<Res::ScoreType, int> scoreMagnification;	// スコア倍率を格納
 		std::list<int>topScore;											// トップ3のスコア
-		static int CalcScore(const MyRes::ScoreType _Type);				// 種類を渡すと倒した数と倍率からスコアを計算して返す
+		static int CalcScore(const Res::ScoreType _Type);				// 種類を渡すと倒した数と倍率からスコアを計算して返す
 		static void CalcTotalScore();									// トータルスコアを求めて、データに挿入する
 		
 		// UI系

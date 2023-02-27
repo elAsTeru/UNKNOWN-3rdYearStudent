@@ -1,5 +1,5 @@
 ﻿#include "BossStatePhase1.h"
-#include "EffekseerMgr.h"
+#include "EfkMgr.h"
 
 namespace State::Boss
 {
@@ -31,7 +31,7 @@ namespace State::Boss
         // 体力が一定以下になったら遷移
         if (_Owner->GetHpPercentage() <= 95)
         {
-            Effect::EffekseerMgr::PlayEffect(MyRes::EfkType::Explosion2, _Owner->transform->position, false);
+            Effect::EfkMgr::PlayEffect(Res::EfkType::Explosion2, _Owner->transform->position, false);
             return StateList::PHASE2;
         }
 

@@ -42,7 +42,7 @@ namespace GameObject
 		if (remainingRunNum)
 		{
 			// 時間をカウント
-			timeCounter += MySys::Timer::GetDeltaTime();
+			timeCounter += Sys::Timer::GetDeltaTime();
 			// 1間隔の移動に所要する時間を経過していたら
 			if (timeCounter > Duration)
 			{
@@ -55,21 +55,6 @@ namespace GameObject
 			{
 				// 設定間隔で並べる + 1間隔 * 経過時間 / 所要時間
 				pool[i]->transform->position.y = (-i * DistDepth) + DistDepth * timeCounter / Duration;
-				// 手前から設置されて行ってるので段々と小さくなる処理
-				if (pool[i]->transform->position.y < 0.0f)
-				{
-					float mag = MyGameMath::FadeMagnification(false, -pool[i]->transform->position.y, DistDepth * pool_size, 0.2f, 1.0f);
-
-					pool[i]->transform->scale.x = MaxScaleWidth * mag;
-					pool[i]->transform->scale.z = MaxScaleHeight * mag;
-				}
-				else
-				{
-					pool[i]->transform->scale.x = MaxScaleWidth;
-					pool[i]->transform->scale.z = MaxScaleHeight;
-				}
-
-				pool[i]->Draw();
 			}
 
 			// 経過時間が所要時間ならリセット
@@ -87,28 +72,32 @@ namespace GameObject
 			{
 				// 設定間隔で並べる
 				pool[i]->transform->position.y = -i * DistDepth;
-
-				if (pool[i]->transform->position.y < 0.0f)
-				{
-					float mag = MyGameMath::FadeMagnification(false, -pool[i]->transform->position.y, DistDepth * pool_size, 0.2f, 1.0f);
-
-					pool[i]->transform->scale.x = MaxScaleWidth * mag;
-					pool[i]->transform->scale.z = MaxScaleHeight * mag;
-				}
-				else
-				{
-					pool[i]->transform->scale.x = MaxScaleWidth;
-					pool[i]->transform->scale.z = MaxScaleHeight;
-				}
-
-				pool[i]->Draw();
 			}
 		}
+
 	}
 
-	void RectMgr::Draw()
+	void RectMgr::Draw() const
 	{
+		// プールの座標を更新
+		for (int i = 0; i < pool_size; ++i)
+		{
+			// 手前から設置されて行ってるので段々と小さくなる処理
+			if (pool[i]->transform->position.y < 0.0f)
+			{
+				float mag = MyGameMath::FadeMagnification(false, -pool[i]->transform->position.y, DistDepth * pool_size, 0.2f, 1.0f);
 
+				pool[i]->transform->scale.x = MaxScaleWidth * mag;
+				pool[i]->transform->scale.z = MaxScaleHeight * mag;
+			}
+			else
+			{
+				pool[i]->transform->scale.x = MaxScaleWidth;
+				pool[i]->transform->scale.z = MaxScaleHeight;
+			}
+
+			pool[i]->Update();
+		}
 	}
 
 	void RectMgr::InitRects()

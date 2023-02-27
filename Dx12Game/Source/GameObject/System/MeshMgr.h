@@ -1,16 +1,10 @@
 ﻿#pragma once
 #include <unordered_map>
 #include <d3d12.h>
-#include <DirectXMath.h>
-#include "Mesh.h"
+#include "Resource/Mesh.h"
 #include "MeshType.h"
 
-namespace MyRes
-{
-	enum class MeshType : unsigned char;
-}
-
-namespace MySys::Res
+namespace Sys
 {
 	class MeshMgr
 	{
@@ -20,16 +14,20 @@ namespace MySys::Res
 
 	public:
 		// Public Method
-		static void OnInit();									// クラスの使用開始
-		static void OnTerm();									// クラスの使用終了
-		static void Init();										// 初期化
-		static void LoadMesh(const MyRes::MeshType& _Type);		// 読み込み
 
-		static const Mesh& GetMesh(const MyRes::MeshType _Type) { return *singleton->meshes[_Type]; }	// メッシュデータの取得
+		/// <summary> MeshMgrの機能を使用開始 </summary>
+		static void OnInit();
+		/// <summary> MeshMgrの機能を使用終了 </summary>
+		static void OnTerm();
+		void Init();
+		void LoadMesh(const Res::MeshType& _Type, const char* _Path);
+		static const Mesh& GetMesh(const Res::MeshType& _Type) { return *singleton->meshes[_Type]; }
 
 	private:
 		// Private Variable
-		std::unordered_map<MyRes::MeshType, Mesh*>meshes;		// 読み込んだメッシュのデータ群
+
+		std::unordered_map<Res::MeshType, Mesh*>meshes;	// 読み込んだメッシュデータ
+		Res::MeshType meshType;
 	};
 }
 

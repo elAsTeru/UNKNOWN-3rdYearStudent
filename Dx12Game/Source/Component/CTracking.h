@@ -36,7 +36,7 @@ namespace Component
 			// 距離から単位ベクトルを作成
 			forward.Normalize();
 			// 移動処理
-			parent->transform->position += forward * MySys::Timer::GetHitStopTime() * this->speed;
+			parent->transform->position += forward * Sys::Timer::GetHitStopTime() * this->speed;
 			// 移動方向の角度を取得
 			this->dir = static_cast<float>(MyMath::Vec2ToAnglesLH(Vector2(forward.x, forward.y)));
 

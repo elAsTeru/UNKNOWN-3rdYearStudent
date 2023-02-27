@@ -1,6 +1,15 @@
 ﻿#pragma once
+// -----------------------
+// プレイヤーが使用する弾
+// -----------------------
 #include "GameObjectBase.h"
-#include "SphereCollider.h"
+
+namespace Component
+{
+	class SphColl;
+	class CMoveForwardY;
+	class CFixPos;
+}
 
 namespace GameObject
 {
@@ -10,19 +19,19 @@ namespace GameObject
 		Bullet();
 		~Bullet();
 
-		void Start() {}
 		void Init()override;
+		void Update()override;
+		void Draw()const override;
 
 	private:
-		// Private Variable
-		float speed;						// 弾の速度
-
-		// Private Method
-		void Update();
-
 		// Component Variable
+		
 		Component::SphColl* sphColl;
+		Component::CMoveForwardY* cMoveForwardY;
+		Component::CFixPos* cFixPos;
+
 		// Component Method
+		
 		void OnTriggerEnter(Base* _Other) override;
 	};
 }

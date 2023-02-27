@@ -61,7 +61,7 @@ namespace Component
 			Vector3 rotVec;
 			{
 				// 回転速度を求める
-				float radSpeed = MyMath::ToRadians(rotSpeed) * MySys::Timer::GetHitStopTime();
+				float radSpeed = MyMath::ToRadians(rotSpeed) * Sys::Timer::GetHitStopTime();
 				radSpeed *= rotDir;
 				// 回転行列を作成
 				Matrix yRotMat = Matrix::CreateRotationY(radSpeed);

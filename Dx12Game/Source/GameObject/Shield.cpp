@@ -35,7 +35,7 @@ namespace GameObject
 			{
 				if (this->timeCounter <= this->DurationAnim)
 				{
-					timeCounter += MySys::Timer::GetHitStopTime();
+					timeCounter += Sys::Timer::GetHitStopTime();
 					this->scaleMag = 1.0f + MyMath::CircularMotion(0.0f, 0.5f, timeCounter, 10.0f);
 				}
 				else
@@ -48,7 +48,7 @@ namespace GameObject
 			{
 				if (this->timeCounter <= this->DurationAnim)
 				{
-					timeCounter += MySys::Timer::GetHitStopTime();
+					timeCounter += Sys::Timer::GetHitStopTime();
 					this->scaleMag = 1.0f + 0.3f - MyMath::CircularMotion(0.0f, 0.5f, timeCounter, 10.0f);
 				}
 				else
@@ -64,7 +64,6 @@ namespace GameObject
 					= Matrix::CreateScale(this->transform->scale * this->scaleMag)
 					* Matrix::CreateRotationY(this->transform->rotation.y + modelDir)
 					* Matrix::CreateTranslation(this->transform->position);
-				MyDX::Dx12Wrapper::DrawBasicMesh({ transform->matrix,MyRes::MeshType::ShieldCrack ,1 });
 			}
 			else
 			{
@@ -73,7 +72,22 @@ namespace GameObject
 					= Matrix::CreateScale(this->transform->scale)
 					* Matrix::CreateRotationY(this->transform->rotation.y + modelDir)
 					* Matrix::CreateTranslation(this->transform->position);
-				MyDX::Dx12Wrapper::DrawBasicMesh({ transform->matrix,MyRes::MeshType::Tracker ,11 });
+			}
+
+		}
+	}
+
+	void Shield::Draw() const
+	{
+		if (this->isDraw)
+		{
+			if (this->timeCounter <= this->DurationAnim)
+			{
+				MyDX::Dx12Wrapper::DrawBasicMesh({ transform->matrix,Res::MeshType::CrackShield ,Res::MaterialType::White });
+			}
+			else
+			{
+				MyDX::Dx12Wrapper::DrawBasicMesh({ transform->matrix,Res::MeshType::Tracker ,Res::MaterialType::Purple });
 
 
 				Vector3 p1 = this->transform->position;
@@ -92,7 +106,7 @@ namespace GameObject
 					= Matrix::CreateScale(vecSize / 2.0f, 1.0f, 0.1f)
 					* Matrix::CreateRotationY(-dir)
 					* Matrix::CreateTranslation(midPos);
-				MyDX::Dx12Wrapper::DrawBasicMesh({ matrix, MyRes::MeshType::Board, 7 });
+				MyDX::Dx12Wrapper::DrawBasicMesh({ matrix, Res::MeshType::Board, Res::MaterialType::Red });
 			}
 		}
 	}
@@ -136,7 +150,7 @@ namespace GameObject
 	{
 		if (_Other->name == "Bullet")
 		{
-			MyObj::Sound::Play(15, false, true);
+			MyObj::Sound::PlaySE(Res::SEType::Reflect);
 		}
 	}
 }

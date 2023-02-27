@@ -6,6 +6,9 @@ namespace Component
 	class SphColl;
 };
 
+/// <summary>
+/// 避け追尾敵が使用するプレイヤーの弾の位置を把握するためのオブジェクト
+/// </summary>
 namespace GameObject
 {
 	class AvoidTracker;
@@ -17,8 +20,9 @@ namespace GameObject
 		~Rader();
 
 		// Public Method
-		void Update() override;			// 更新
 		void Init()override;
+		void Update() override;			// 更新
+		void Draw()const{};
 		void SetForce(const XMFLOAT3& _ForceNorVec3) { this->forceNorVec3 = _ForceNorVec3; }
 
 		GameObject::AvoidTracker* parentObj;

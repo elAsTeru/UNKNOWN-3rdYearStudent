@@ -1,5 +1,5 @@
 ﻿#include "Laser.h"
-#include "EffekseerMgr.h"
+#include "EfkMgr.h"
 #include "SphereCollider.h"
 
 #include <cmath>
@@ -29,8 +29,9 @@ namespace GameObject
 		this->startPos = {};
 		this->endPos = {};
 		this->isActivate = false;
-		timeCounter = 0;
-		rot = 0.0f;
+		this->timeCounter = 0;
+		this->rot = 0.0f;
+		this->addLaserScale = 0.0f;
 	}
 
 	void Laser::Update()
@@ -54,57 +55,29 @@ namespace GameObject
 			// 2点間の距離を大きさに
 			float vecSize = dist3D.Length();
 
-			// 始点描画
-			{
-				this->rot += MySys::Timer::GetHitStopTime() * this->RotSpeed;
-				XMMATRIX startPointMatrix
-					= Matrix::CreateScale(4.0f)
-					* Matrix::CreateRotationX(this->rot)
-					* Matrix::CreateRotationZ(this->rot)
-					* Matrix::CreateTranslation(this->startPos);
-				MyDX::Dx12Wrapper::DrawBasicMesh({ startPointMatrix, MyRes::MeshType::GeoBox, 7 });
-
-				startPointMatrix
-					= Matrix::CreateScale(3.0f)
-					* Matrix::CreateRotationX(-this->rot)
-					* Matrix::CreateRotationZ(-this->rot)
-					* Matrix::CreateTranslation(this->startPos);
-				MyDX::Dx12Wrapper::DrawBasicMesh({ startPointMatrix, MyRes::MeshType::GeoTriangle, 7 });
-			}
-
-
 			// 親オブジェクトがある || 終点が決定している場合
 			if (this->parentPos || !MyMath::IsNearZero(this->endPos))
 			{
 				// レーザーの大きさを伝えるための板のサイズ
-				float addScale = 0.0f;
+				this->addLaserScale = 0.0f;
 				if (auto temp = GameObject::Mgr::FindActiveObj("LaserColl"))
 				{
-					addScale = temp->GetComponent<Component::SphColl>()->radius;
+					this->addLaserScale = temp->GetComponent<Component::SphColl>()->radius;
 				}
 
 				// レーザーの範囲に仮置きで板を描画
-				XMMATRIX matrix
-					= Matrix::CreateScale(vecSize / 2.0f, 1.0f, 0.1f + addScale)
+				float laserWid = 0.1f;
+				this->lineMatrix
+					= Matrix::CreateScale(vecSize / 2.0f, 1.0f, laserWid + this->addLaserScale)
 					* Matrix::CreateRotationY(dirY)
 					* Matrix::CreateTranslation(midPos);
-
-				if (MyMath::IsNearZero(addScale))
-				{
-					MyDX::Dx12Wrapper::DrawBasicMesh({ matrix, MyRes::MeshType::Board, 1 });
-				}
-				else
-				{
-					MyDX::Dx12Wrapper::DrawBasicMesh({ matrix, MyRes::MeshType::Board, 7 });
-				}
 			}
-
 
 			// 終点が決定したのであれば
 			if (this->endPos != Vector3::Zero)
 			{
 				// 当たり判定は一度しか設置しない
-				if (timeCounter += MySys::Timer::GetDeltaTime();!this->isActivate && (timeCounter >= Delay))
+				if (timeCounter += Sys::Timer::GetDeltaTime();!this->isActivate && (timeCounter >= Delay))
 				{
 					// レーザー有効化
 					this->isActivate = true;
@@ -139,7 +112,7 @@ namespace GameObject
 				else
 				{
 					// 一定時間経過したらレーザを無効化する
-					this->timeCounter += MySys::Timer::GetDeltaTime();
+					this->timeCounter += Sys::Timer::GetDeltaTime();
 					if (this->timeCounter >= this->Duration)
 					{
 						for (auto& coll : colls)
@@ -150,12 +123,46 @@ namespace GameObject
 						// 当たり判定を無効化できたら、自身を無効化する
 						this->SetActive(false);
 						// エフェクトを停止
-						Effect::EffekseerMgr::StopEffect(this->laserEfkHandle);
+						Effect::EfkMgr::StopEffect(this->laserEfkHandle);
 					}
 				}
 			}
 			// レーザーのエフェクトをループさせる
-			Effect::EffekseerMgr::UpdateLoopPlayEffect(this->startPos, this->laserEfkHandle, MySys::Timer::GetHitStopTime() * 100, Vector3(0.0f, dirY, 0.0f));
+			Effect::EfkMgr::UpdateLoopPlayEffect(this->startPos, this->laserEfkHandle, Sys::Timer::GetHitStopTime() * 100, Vector3(0.0f, dirY, 0.0f));
+		}
+
+		// 回転
+		this->rot += Sys::Timer::GetHitStopTime() * this->RotSpeed;
+	}
+
+	void Laser::Draw() const
+	{
+		// 始点描画
+		XMMATRIX startPointMatrix
+			= Matrix::CreateScale(4.0f)
+			* Matrix::CreateRotationX(this->rot)
+			* Matrix::CreateRotationZ(this->rot)
+			* Matrix::CreateTranslation(this->startPos);
+		MyDX::Dx12Wrapper::DrawBasicMesh({ startPointMatrix, Res::MeshType::GeoBox, Res::MaterialType::Red });
+
+		startPointMatrix
+			= Matrix::CreateScale(3.0f)
+			* Matrix::CreateRotationX(-this->rot)
+			* Matrix::CreateRotationZ(-this->rot)
+			* Matrix::CreateTranslation(this->startPos);
+		MyDX::Dx12Wrapper::DrawBasicMesh({ startPointMatrix, Res::MeshType::GeoTriangle, Res::MaterialType::Red });
+		
+		// 親オブジェクトがある || 終点が決定している場合
+		if (this->parentPos || !MyMath::IsNearZero(this->endPos))
+		{
+			if (MyMath::IsNearZero(this->addLaserScale))
+			{
+				MyDX::Dx12Wrapper::DrawBasicMesh({ this->lineMatrix, Res::MeshType::Board, Res::MaterialType::White });
+			}
+			else
+			{
+				MyDX::Dx12Wrapper::DrawBasicMesh({ this->lineMatrix, Res::MeshType::Board, Res::MaterialType::Red });
+			}
 		}
 	}
 
@@ -175,7 +182,7 @@ namespace GameObject
 			// 2点間の角度
 			float dirY = MyMath::Vec2ToAnglesLH(Vector2(this->endPos.x - this->startPos.x, this->endPos.z - this->startPos.z));
 			// エフェクト
-			this->laserEfkHandle = Effect::EffekseerMgr::PlayEffect(MyRes::EfkType::Laser, this->startPos, true, Vector3(0.0f, dirY, 0.0f));
+			this->laserEfkHandle = Effect::EfkMgr::PlayEffect(Res::EfkType::Laser, this->startPos, true, Vector3(0.0f, dirY, 0.0f));
 
 			return true;
 		}

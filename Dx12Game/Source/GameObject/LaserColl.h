@@ -15,8 +15,9 @@ namespace GameObject
 		~LaserColl();
 
 		// Public Method
-		void Update() override;			// 更新
 		void Init()override;
+		void Update() override;			// 更新
+		void Draw()const{};
 
 	private:
 		// Component Variable

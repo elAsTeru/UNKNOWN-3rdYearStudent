@@ -1,9 +1,12 @@
 ﻿#include "Reverser.h"
+#include "CFixPos.h"
+
 
 namespace GameObject
 {
 	Reverser::Reverser():
 		Base(Tag::Enemy, "Reverser"),
+		cFixPos(AddComponent<Component::CFixPos>()),
 		mode(Mode::Spawn),
 		MaxSpawnScale(2),
 		SpawnDuration(1),
@@ -47,12 +50,17 @@ namespace GameObject
 			= Matrix::CreateRotationZ(transform->rotation.z)
 			* Matrix::CreateRotationY(transform->rotation.y + modelDir)
 			* Matrix::CreateTranslation(transform->position.x, transform->position.y, transform->position.z);
-		MyDX::Dx12Wrapper::DrawBasicMesh({ transform->matrix,MyRes::MeshType::Reverser,7 });
 
 		subTrans->matrix
 			= Matrix::CreateRotationZ(subTrans->rotation.z += 0.05f)
 			* transform->matrix;
-		MyDX::Dx12Wrapper::DrawBasicMesh({ subTrans->matrix,MyRes::MeshType::Tail ,7 });
+
+	}
+
+	void Reverser::Draw() const
+	{
+		MyDX::Dx12Wrapper::DrawBasicMesh({ transform->matrix,Res::MeshType::Reverser,Res::MaterialType::Red });
+		MyDX::Dx12Wrapper::DrawBasicMesh({ subTrans->matrix,Res::MeshType::Tail ,Res::MaterialType::Red });
 	}
 
 	void Reverser::Init()
@@ -66,8 +74,8 @@ namespace GameObject
 	void Reverser::Eliminate()
 	{
 		// スコアを加算する
-		MyObj::Score::AddEliminateNum(MyRes::ScoreType::Reverser);
-		MyObj::Sound::Play(6, false, true);	// 敵死亡SE
+		MyObj::Score::AddEliminateNum(Res::ScoreType::Reverser);
+		MyObj::Sound::PlaySE(Res::SEType::Eliminate);
 		// 自信を非アクティブにする
 		SetActive(false);
 	}
@@ -77,61 +85,12 @@ namespace GameObject
 		// 向きを正規ベクトルにする
 		Vector2 norVec2 = MyMath::AngleToVecs2LH(transform->rotation.y);
 		// 移動量分移動させる
-		transform->position.x += norVec2.x * speed * MySys::Timer::GetDeltaTime();
-		transform->position.z += norVec2.y * speed * MySys::Timer::GetDeltaTime();
+		transform->position.x += norVec2.x * speed * Sys::Timer::GetDeltaTime();
+		transform->position.z += norVec2.y * speed * Sys::Timer::GetDeltaTime();
 
-		// 右壁との判定
-		if (transform->position.x >= MAX_RIGHT)
+		if (this->cFixPos->Update())
 		{
-			// 画面内に戻して
-			transform->position.x = MAX_RIGHT - 0.1f;
-			// 移動方向を反転
-			transform->rotation.y -= MyMath::ToRadians(180);
-			// 反転動作を有効化
-			isReverse = true;
-		}
-		// 左壁との判定
-		else if (transform->position.x <= -MAX_RIGHT)
-		{
-			// 画面内に戻して
-			transform->position.x = -MAX_RIGHT + 0.1f;
-			// 移動方向を反転
-			transform->rotation.y += MyMath::ToRadians(180);
-			// 反転動作を有効化
-			isReverse = true;
-		}
-		// 奥壁との判定
-		else if (transform->position.z >= MAX_DEPTH)
-		{
-			// 画面内に戻して
-			transform->position.z = MAX_DEPTH - 0.1f;
-			// 移動方向を反転
-			if (transform->rotation.y >= MyMath::ToRadians(180))
-			{
-				transform->rotation.y -= MyMath::ToRadians(180);
-			}
-			else
-			{
-				transform->rotation.y += MyMath::ToRadians(180);
-			}
-			// 反転動作を有効化
-			isReverse = true;
-		}
-		// 手前壁との判定
-		else if (transform->position.z <= -MAX_DEPTH)
-		{
-			// 画面内に戻して
-			transform->position.z = -MAX_DEPTH + 0.1f;
-			// 移動方向を反転
-			if (transform->rotation.y >= MyMath::ToRadians(180))
-			{
-				transform->rotation.y -= MyMath::ToRadians(180);
-			}
-			else
-			{
-				transform->rotation.y += MyMath::ToRadians(180);
-			}
-			// 反転動作を有効化
+			this->transform->rotation.y += MyMath::ToRadians(180.0f);
 			isReverse = true;
 		}
 	}
@@ -151,7 +110,7 @@ namespace GameObject
 	void Reverser::Spawn()
 	{
 		// 時間を計測
-		timeCounter += MySys::Timer::GetDeltaTime();
+		timeCounter += Sys::Timer::GetDeltaTime();
 
 		float interval = SpawnDuration / ExpanRunNum;	// 間隔 = 実行時間 / 実行回数
 		// 拡大率を設定

@@ -7,7 +7,7 @@ namespace Component
 {
 	void SphColl::Start()
 	{
-		MySys::ColliderMgr::AddCollider(this);
+		Sys::ColliderMgr::AddCollider(this);
 		this->isTrigger = true;
 		this->center = &parent->transform->position;
 		this->radius = 1;
@@ -19,6 +19,6 @@ namespace Component
 			= Matrix::CreateScale({ this->radius })
 			* Matrix::CreateTranslation(*this->center);
 
-		MyDX::Dx12Wrapper::DrawBasicMesh({ matrix, MyRes::MeshType::Sphere, 3 });
+		MyDX::Dx12Wrapper::DrawBasicMesh({ matrix, Res::MeshType::Sphere, Res::MaterialType::Green });
 	}
 }

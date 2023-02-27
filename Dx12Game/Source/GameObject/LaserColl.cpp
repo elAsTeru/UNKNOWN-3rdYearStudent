@@ -18,7 +18,7 @@ namespace GameObject
 		// 指定された時間で最大サイズになる
 		const float MaxTime = 1;
 		const float MaxRadius = 3;
-		if(this->timeCounter += MySys::Timer::GetDeltaTime(); timeCounter >= MaxTime)
+		if(this->timeCounter += Sys::Timer::GetDeltaTime(); timeCounter >= MaxTime)
 		{ this->timeCounter = MaxTime; }
 		this->sphColl->radius = std::lerp(0, MaxRadius, this->timeCounter);
 	}

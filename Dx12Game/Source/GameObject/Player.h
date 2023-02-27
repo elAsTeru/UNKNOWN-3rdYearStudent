@@ -20,6 +20,8 @@ namespace GameObject
 		~Player();
 
 		void Init()override;
+		void Update()override;
+		void Draw()const override;
 
 		void AddLife();
 		const int& GetLifeNum() { return this->life; }
@@ -44,9 +46,6 @@ namespace GameObject
 		bool isVisible;		// 可視状態
 		int runCounter;		// 実行回数
 		uint32_t elimiEfkHandle;	// やられエフェクトハンドル
-
-		// Private Method
-		void Update()override;
 
 		// Component Variable
 		Component::SphColl* sphColl;

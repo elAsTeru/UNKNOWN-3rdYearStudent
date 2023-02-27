@@ -1,5 +1,5 @@
 ﻿#include "ThroughEnemy.h"
-#include "EffekseerMgr.h"
+#include "EfkMgr.h"
 
 namespace GameObject
 {
@@ -33,7 +33,7 @@ namespace GameObject
 		}
 		else if(mode == Mode::Normal)
 		{
-			this->timeCounter += MySys::Timer::GetHitStopTime();
+			this->timeCounter += Sys::Timer::GetHitStopTime();
 			Move();
 
 			// Z座標が-30以下になったら無効化
@@ -54,6 +54,10 @@ namespace GameObject
 			* Matrix::CreateRotationY(transform->rotation.y + ModelDir)
 			* Matrix::CreateTranslation(transform->position.x, transform->position.y, transform->position.z);
 
+	}
+
+	void ThroughEnemy::Draw() const
+	{
 		// 無敵か?状態で表示する物を変更
 		if (this->isInvincible)
 		{
@@ -62,10 +66,12 @@ namespace GameObject
 				* Matrix::CreateRotationZ(this->timeCounter)
 				* Matrix::CreateTranslation(0, 0, -1.5)
 				* transform->matrix;
-			MyDX::Dx12Wrapper::DrawBasicMesh({ matrix,MyRes::MeshType::Tail,11 });
+			MyDX::Dx12Wrapper::DrawBasicMesh({ matrix,Res::MeshType::Tail,Res::MaterialType::Purple });
 		}
 		else
-		{ MyDX::Dx12Wrapper::DrawBasicMesh({ transform->matrix,MyRes::MeshType::Reverser,7 }); }
+		{
+			MyDX::Dx12Wrapper::DrawBasicMesh({ transform->matrix,Res::MeshType::Reverser,Res::MaterialType::Red });
+		}
 	}
 
 	void ThroughEnemy::Init()
@@ -86,10 +92,10 @@ namespace GameObject
 		{ return; }
 
 		// 死亡エフェクト再生
-		Effect::EffekseerMgr::PlayEffect(MyRes::EfkType::Explosion, this->transform->position, false);
+		Effect::EfkMgr::PlayEffect(Res::EfkType::Explosion, this->transform->position, false);
 		// スコアを加算する
-		MyObj::Score::AddEliminateNum(MyRes::ScoreType::Thurough);
-		MyObj::Sound::Play(6, false, true);	// 敵死亡SE
+		MyObj::Score::AddEliminateNum(Res::ScoreType::Thurough);
+		MyObj::Sound::PlaySE(Res::SEType::Eliminate);
 		// 自信を非アクティブにする
 		SetActive(false);
 	}
@@ -100,14 +106,14 @@ namespace GameObject
 		Vector2 forward = MyMath::AngleToVecs2LH(transform->rotation.y);
 
 		// 移動量分移動させる
-		transform->position.x += forward.x * speed * MySys::Timer::GetHitStopTime();
-		transform->position.z += forward.y * speed * MySys::Timer::GetHitStopTime();
+		transform->position.x += forward.x * speed * Sys::Timer::GetHitStopTime();
+		transform->position.z += forward.y * speed * Sys::Timer::GetHitStopTime();
 	}
 
 	void ThroughEnemy::Spawn()
 	{
 		// 時間を計測
-		timeCounter += MySys::Timer::GetHitStopTime();
+		timeCounter += Sys::Timer::GetHitStopTime();
 
 		float interval = SpawnDuration / ExpanRunNum;	// 間隔 = 実行時間 / 実行回数
 		// 拡大率を設定
@@ -177,7 +183,7 @@ namespace GameObject
 			}
 			else
 			{
-				MyObj::Sound::Play(15, false, true);
+				MyObj::Sound::PlaySE(Res::SEType::Reflect);
 			}
 		}
 	}

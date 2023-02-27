@@ -31,8 +31,8 @@ namespace Component
 			{ return Vector2::Zero; }
 
 			// 入力量を移動量に(乗算)
-			axis.x *= (speed * MySys::Timer::GetHitStopTime());
-			axis.y *= (speed * MySys::Timer::GetHitStopTime());
+			axis.x *= (speed * Sys::Timer::GetHitStopTime());
+			axis.y *= (speed * Sys::Timer::GetHitStopTime());
 			// 移動量を適応
 			this->parent->transform->position.x += axis.x;
 			this->parent->transform->position.z += axis.y;

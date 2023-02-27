@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include <vector>
-#include "Material.h"
+#include "Resource/Material.h"
 
-namespace MySys::Res
+namespace Sys
 {
 	class MaterialMgr
 	{

@@ -25,21 +25,20 @@ namespace GameObject
 	void BackgroundCube::Update()
 	{
 		// 持続時間を終了したら、非表示にする
-		if (this->timeCounter += MySys::Timer::GetDeltaTime(); this->timeCounter >= this->duration)
+		if (this->timeCounter += Sys::Timer::GetDeltaTime(); this->timeCounter >= this->duration)
 		{
 			this->SetActive(false);
 		}
 		// 移動
-		transform->position += dir * MySys::Timer::GetDeltaTime() * speed;
+		this->transform->position += dir * Sys::Timer::GetDeltaTime() * speed;
 
-		Draw();
-	}
-
-	void BackgroundCube::Draw()
-	{
-		transform->matrix
+		this->transform->matrix
 			= Matrix::CreateScale(this->transform->scale)
 			* Matrix::CreateTranslation(this->transform->position);
-		MyDX::Dx12Wrapper::DrawBasicMesh({ transform->matrix, MyRes::MeshType::Cube, 6 });
+	}
+
+	void BackgroundCube::Draw()const
+	{
+		MyDX::Dx12Wrapper::DrawBasicMesh({ this->transform->matrix, Res::MeshType::Cube, Res::MaterialType::Gray2 });
 	}
 }

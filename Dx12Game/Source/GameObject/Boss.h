@@ -1,4 +1,7 @@
 ﻿#pragma once
+// ------------------------------
+// ステージ1~3で使用しているボス
+// ------------------------------
 #include "GameObjectBase.h"
 
 namespace Component
@@ -17,6 +20,11 @@ namespace State::Boss
 	enum class StateList;
 }
 
+namespace Res
+{
+	enum class MaterialType : unsigned char;
+}
+
 namespace GameObject
 {
 	class Laser;
@@ -30,8 +38,9 @@ namespace GameObject
 		~Boss();
 
 		// Public Method
-		void Update() override;			// 更新
 		void Init()override;
+		void Update() override;			// 更新
+		void Draw()const override;
 
 
 		// ステートから呼ぶ処理一覧
@@ -112,11 +121,8 @@ namespace GameObject
 		// 色関連
 		const float DurationDamageColor;		// ダメージカラーの持続時間
 		float damageTimeCounter;
-		const uint8_t NumMatWhite;				// 白テクスチャの番号
-		const uint8_t NumMatBlue;				// 青テクスチャの番号
-		const uint8_t NumMatYellow;				// 黄テクスチャの番号
-		const uint8_t NumMatRed;				// 赤テクスチャの番号
-		int matNum;
+		Res::MaterialType matType;
+
 
 		// ステート
 		State::Boss::StateList nowState;				// 現在のステート

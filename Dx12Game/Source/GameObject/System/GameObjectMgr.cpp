@@ -133,6 +133,21 @@ namespace GameObject
 		//deadObjects.clear();
 	}
 
+	void Mgr::Draw()
+	{
+		// 全てのオブジェクトの描画
+		for (auto tag = Tag::Begin; tag != Tag::End; ++tag)
+		{
+			for (auto object : singleton->objects[tag])
+			{
+				if (object->GetActive())
+				{
+					object->Draw();
+				}
+			}
+		}
+	}
+
 	void Mgr::AddObject(Base* _Object)
 	{
 		// 保留リストに追加する

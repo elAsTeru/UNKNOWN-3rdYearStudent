@@ -2,7 +2,6 @@
 #include "Sound.h"
 #include "SelectUI.h"
 #include "InputMgr.h"
-#include "MenuUI.h"
 #include "CubeGenerator.h"
 #include "CLineMove.h"
 
@@ -16,12 +15,12 @@ namespace Scene
 
 
 		this->selectUI = new GameObject::SelectUI;
-		this->menuUI = new GameObject::MenuUI;
 
 		GameObject::Mgr::Find("RectMgr")->SetActive(false);		// タイトルを飛ばす場合、保留リストに入っているので、強制的に無効化
 
-		MyObj::Sound::Play(7, false, true);	// 選択シーン突入SE
-		bgmHandle = MyObj::Sound::Play(11, true, true);	// 選択シーンBGM
+		MyObj::Sound::PlaySE(Res::SEType::SelectIn);
+		MyObj::Sound::PlayBGM(Res::BGMType::Select);
+
 		MyObj::Score::Reset();
 
 		Input::Mgr::GetPad()->SetVibration(0, 0, 0);	// 振動終了
@@ -74,10 +73,7 @@ namespace Scene
 
 	Select::~Select()
 	{
-		MyObj::Sound::Stop(11, bgmHandle);	// 選択シーンBGM終了
-
 		delete this->selectUI;
-		delete this->menuUI;
 	}
 
 	void Select::Update()

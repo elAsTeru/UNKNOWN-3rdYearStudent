@@ -1,4 +1,7 @@
 ﻿#pragma once
+// -------------------------------
+// フィールドの四角に続く奥の四角
+// -------------------------------
 #include "GameObjectBase.h"
 
 namespace GameObject
@@ -11,10 +14,10 @@ namespace GameObject
 		BackgroundRect();
 		~BackgroundRect();
 
-		void Start() {}
 		void Init()override;
 		void Update();
-		void Draw();
+		void Draw()const override;
+
 		void SetParent(RectMgr* _Parent) { parent = _Parent; }
 	private:
 		RectMgr* parent;	// 親オブジェクト(Mgr)

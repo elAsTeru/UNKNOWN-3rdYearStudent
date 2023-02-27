@@ -22,6 +22,5 @@ namespace Scene
 		// Private Variable
 		int bgmHandle;	// BGMのハンドル
 		GameObject::SelectUI* selectUI = nullptr;
-		GameObject::MenuUI* menuUI = nullptr;
 	};
 }

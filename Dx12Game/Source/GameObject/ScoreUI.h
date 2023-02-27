@@ -9,9 +9,9 @@ namespace GameObject
 		ScoreUI();
 		~ScoreUI();
 
-		void Start() {}
 		void Init()override;
 		void Update();
+		void Draw()const override;
 		void SetScore(const std::wstring _Score) { this->score = _Score; }	// スコアをセットする
 		void AddScore(const std::wstring _Name, const int _Score);	// スコアを加算する
 
@@ -31,8 +31,5 @@ namespace GameObject
 
 		std::wstring score;    // 討伐スコア
 		float timeCounter;
-
-		// Private Method
-		void Draw();
 	};
 }

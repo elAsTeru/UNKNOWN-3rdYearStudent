@@ -1,4 +1,7 @@
 ﻿#pragma once
+// -----------------------------
+// ステージの四角を描画
+// -----------------------------
 #include "GameObjectBase.h"
 
 namespace GameObject
@@ -12,7 +15,7 @@ namespace GameObject
 		void Start() {}
 		void Init()override {}
 		void Update()override;
-		void Draw();
+		void Draw()const override;
 
 	private:
 		// Private Variable	

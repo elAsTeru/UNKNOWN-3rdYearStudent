@@ -17,8 +17,9 @@ namespace GameObject
 		~SlowTracker();
 
 		// Public Method
-		void Update() override;			// 更新
 		void Init()override;
+		void Update() override;			// 更新
+		void Draw()const override;
 		void SetTarget(Base* _TargetObject) {targetObject = _TargetObject; }	// 目標を設定
 		void Eliminate();
 	private:

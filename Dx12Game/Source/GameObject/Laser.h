@@ -10,8 +10,10 @@ namespace GameObject
 		~Laser();
 
 		// Public Method
-		void Update() override;			// 更新
 		void Init()override;
+		void Update() override;		// 更新
+		void Draw()const override;	// 描画
+
 
 		/// <summary>
 		/// レーザーの始点・終点を記録し、完了したらtrueを返却
@@ -31,6 +33,8 @@ namespace GameObject
 		const float Width;						// レーザーの幅
 		float timeCounter;						// レーザーの時間計測
 		uint32_t laserEfkHandle;				// レーザーのエフェクトハンドル
+		float addLaserScale;					// 線の拡大量
+		XMMATRIX lineMatrix;					// 線用の行列
 
 		// レーザー始点の回転
 		const float RotSpeed;

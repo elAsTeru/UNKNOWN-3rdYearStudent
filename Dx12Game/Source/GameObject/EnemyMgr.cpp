@@ -1,10 +1,6 @@
 ﻿#include "EnemyMgr.h"
 
-#include <Rapidjson/document.h>
-#include <Rapidjson/istreamwrapper.h>
-#include <fstream>
-#include <Rapidjson/error/en.h>
-#include <iostream>
+#include "Tool/JsonLoader.h"
 
 // 個別設定が入る敵
 #include "ThroughEnemy.h"
@@ -103,19 +99,7 @@ namespace GameObject
 
 	bool EnemyMgr::Load(std::string _JsonFilePath)
 	{
-		std::ifstream ifs(_JsonFilePath);
-		rapidjson::IStreamWrapper isw(ifs);
-		// JSONファイル解析
-		rapidjson::Document doc;
-		doc.ParseStream(isw);
-		// 読み込みチェック
-		if (doc.HasParseError()) {
-			std::cout << "error offset:" << doc.GetErrorOffset() << std::endl;
-			std::cout << "error pase:" << rapidjson::GetParseError_En(doc.GetParseError()) << std::endl;
-			// 読み込み失敗
-			return false;
-		}
-		rapidjson::Value& data = doc;
+		auto data = System::Tool::LoadJson(_JsonFilePath.c_str());
 
 		size_t phase = data.MemberCount();		// フェーズ数
 		enemyData.reserve(phase);				// フェーズ数分のメモリ確保

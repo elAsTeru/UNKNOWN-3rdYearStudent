@@ -48,7 +48,7 @@ namespace Component
 		void Update()
 		{
 			// クールタイムチェック
-			if (timeCounter += MySys::Timer::GetHitStopTime(); timeCounter < coolTime)
+			if (timeCounter += Sys::Timer::GetHitStopTime(); timeCounter < coolTime)
 			{ return; }
 
 			timeCounter = 0;
@@ -89,7 +89,7 @@ namespace Component
 				Vector3 rotVec;
 				{
 					// 回転速度を求める
-					float radSpeed = MyMath::ToRadians(rotSpeed) * MySys::Timer::GetHitStopTime();
+					float radSpeed = MyMath::ToRadians(rotSpeed) * Sys::Timer::GetHitStopTime();
 					radSpeed *= rotDir;
 					// 回転行列を作成
 					Matrix yRotMat = Matrix::CreateRotationY(radSpeed);
@@ -135,7 +135,7 @@ namespace Component
 					bullet->transform->rotation.y = this->nowDirY;
 					bullet->SetActive(true);
 					// 射撃SEを再生
-					MyObj::Sound::Play(5, false, true);
+					MyObj::Sound::PlaySE(Res::SEType::Shot);
 				}
 
 				// 弾の左右出る方を交代

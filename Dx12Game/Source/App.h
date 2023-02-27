@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include <cstdint>
 
-namespace MySys
+namespace Sys
 {
 	class Window;
 }
@@ -18,7 +18,7 @@ public:
 private:
 	// Private Variable
 	uint32_t width, height;
-	MySys::Window* window;
+	Sys::Window* window;
 
 	// Private Method
 	bool Init();

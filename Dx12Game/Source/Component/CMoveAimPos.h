@@ -37,7 +37,7 @@ namespace Component
 			Vector3 dir = vec;
 			dir.Normalize();
 			// 移動処理
-			this->parent->transform->position += dir * speed * MySys::Timer::GetHitStopTime();
+			this->parent->transform->position += dir * speed * Sys::Timer::GetHitStopTime();
 			// 移動後の位置が目標を通過してしまっていたら
 			if (vec.Length() < Vector3(this->parent->transform->position - startPos).Length())
 			{

@@ -28,7 +28,7 @@ namespace Component
 
 		void Update()
 		{
-			this->timeCounter += MySys::Timer::GetDeltaTime();
+			this->timeCounter += Sys::Timer::GetDeltaTime();
 			// 時間カウンタが間隔時間を超えたら
 			if (this->timeCounter >= this->interval)
 			{

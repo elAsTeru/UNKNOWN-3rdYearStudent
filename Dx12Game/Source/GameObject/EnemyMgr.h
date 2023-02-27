@@ -1,6 +1,8 @@
 ﻿#pragma once
+// -----------------------------
+// 敵の生成管理
+// -----------------------------
 #include "GameObjectBase.h"
-#include "SphereCollider.h"
 
 namespace GameObject
 {
@@ -21,9 +23,10 @@ namespace GameObject
 		EnemyMgr();
 		~EnemyMgr();
 
-		void Start() {}
 		void Init()override {}
 		void Update(){}
+		void Draw()const {};
+
 		const int& GetClearPhaseNum() { return this->phaseCount; }
 		/// <summary>
 		/// 敵の出現を行っていく、フェーズが終了したら、trueを返却する

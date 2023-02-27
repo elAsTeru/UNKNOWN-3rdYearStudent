@@ -25,7 +25,7 @@ namespace Scene
 
 		titleUI = new GameObject::TitleUI;
 
-		bgmHandle = MyObj::Sound::Play(10, true, true);	// タイトルBGM再生
+		MyObj::Sound::PlayBGM(Res::BGMType::Title);
 
 		auto rectMgr = static_cast<GameObject::RectMgr*>(GameObject::Mgr::Find("RectMgr"));
 		rectMgr->SetActive(true);
@@ -94,13 +94,11 @@ namespace Scene
 
 		delete enemyMgr;
 		enemyMgr = nullptr;
-
-		MyObj::Sound::Stop(10, bgmHandle);	// タイトルBGM停止
 	}
 
 	void Title::Update()
 	{
-		titleTimer += MySys::Timer::GetDeltaTime();		// 経過時間
+		titleTimer += Sys::Timer::GetDeltaTime();		// 経過時間
 		enemyMgr->Update(static_cast<const float>(titleTimer));
 
 		field->Update();

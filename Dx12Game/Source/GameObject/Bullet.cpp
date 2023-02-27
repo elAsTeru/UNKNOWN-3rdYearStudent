@@ -1,23 +1,21 @@
 ﻿#include "Bullet.h"
 
-
 #include "MeshMgr.h"
 #include "SphereCollider.h"
-#include "EffekseerMgr.h"
+#include "EfkMgr.h"
 #include "ThroughEnemy.h"
+#include "SphereCollider.h"
+#include "CMoveForwardY.h"
+#include "CFixPos.h"
 
 namespace GameObject
 {
-	/// <summary>
-	/// インスタンス
-	/// </summary>
-	/// <param name="_X">弾の飛ぶ方向Ⅹ</param>
-	/// <param name="_Z">弾の飛ぶ方向Ｙ</param>
 	Bullet::Bullet() :
-		Base(Tag::Bullet, "Bullet")
+		Base(Tag::Bullet, "Bullet"),
+		sphColl(AddComponent<Component::SphColl>()),
+		cMoveForwardY(AddComponent<Component::CMoveForwardY>()),
+		cFixPos(AddComponent<Component::CFixPos>())
 	{
-		// 球状のあたり判定を追加
-		this->sphColl = AddComponent<Component::SphColl>();
 		this->sphColl->radius = 0.3f;
 	}
 
@@ -27,36 +25,34 @@ namespace GameObject
 
 	void Bullet::Init()
 	{
-		this->speed = 0.0f;
 		this->sphColl->isEnable = true;
+		this->cMoveForwardY->speed = 40.0f;
+		this->transform->scale = { 1.5f };
 	}
 
 	void Bullet::Update()
 	{
-		float speed = static_cast<float>(40.0f * MySys::Timer::GetHitStopTime());
-
-		// 向きから移動方向を取得する
-		Vector2 vec2 = MyMath::AngleToVecs2LH(transform->rotation.y);
-		transform->position.x += vec2.x * speed;
-		transform->position.z += vec2.y * speed;
+		this->cMoveForwardY->Update();
 
 		// ステージの枠に当たったら、エフェクトを表示後、自身を無効化する
-		if ((transform->position.x < -MAX_RIGHT - 0.5f || transform->position.x > MAX_RIGHT + 0.5f)
-			|| (transform->position.z < -MAX_DEPTH - 0.5f || transform->position.z > MAX_DEPTH + 0.5f))
+		if (this->cFixPos->Update())
 		{
-			Effect::EffekseerMgr::PlayEffect(MyRes::EfkType::Hit, this->transform->position, false);
+			Effect::EfkMgr::PlayEffect(Res::EfkType::Hit, this->transform->position, false);
 			SetActive(false);
 			return;
 		}
 
-		// モデルの向き調整分
+		// 描画情報設定
 		float modelDir = MyMath::ToRadians(270);
-		transform->matrix
-			= Matrix::CreateScale(1.5f, 1.5f, 1.5f)
+		this->transform->matrix
+			= Matrix::CreateScale(this->transform->scale)
 			* Matrix::CreateRotationY(transform->rotation.y + modelDir)
 			* Matrix::CreateTranslation(transform->position.x, transform->position.y, transform->position.z);
+	}
 
-		MyDX::Dx12Wrapper::DrawBasicMesh({ transform->matrix,MyRes::MeshType::Bullet,2 });
+	void Bullet::Draw() const
+	{
+		MyDX::Dx12Wrapper::DrawBasicMesh({ transform->matrix,Res::MeshType::Bullet,Res::MaterialType::Orange });
 	}
 
 	void Bullet::OnTriggerEnter(Base* _Other)
@@ -64,17 +60,16 @@ namespace GameObject
 		// 当たったのがシールドなら弾がはじかれたよう飛ぶ
 		if (_Other->name == "Shield" || (_Other->name == "ThroughEnemy" && static_cast<GameObject::ThroughEnemy*>(_Other)->isInvincible ))
 		{
-			float digDir = MyMath::ToDegrees(this->transform->rotation.y) - 180.0f + (std::rand() % 50) - (std::rand() % 50);
+			float revDir = 180.0f;	// 跳ね返る弾の基準角度
+			uint8_t rangeDir = 50;	// 跳ね返る弾の拡散角度
+
+			float digDir = MyMath::ToDegrees(this->transform->rotation.y) - revDir + (std::rand() % rangeDir) - (std::rand() % rangeDir);
 			this->transform->rotation.y = MyMath::ToRadians(digDir);
 			this->sphColl->isEnable = false;
 		}
-		else if (_Other->tag == Tag::Enemy)
+		else if (_Other->tag == Tag::Enemy && _Other->name != "Rader")
 		{
-			// Raderは判定しない
-			if (_Other->name == "Rader")
-			{ return; }
-
-			Effect::EffekseerMgr::PlayEffect(MyRes::EfkType::Hit, this->transform->position, false);
+			Effect::EfkMgr::PlayEffect(Res::EfkType::Hit, this->transform->position, false);
 			// 自分を非アクティブに
 			SetActive(false);
 		}
