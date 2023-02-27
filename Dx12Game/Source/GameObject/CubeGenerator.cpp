@@ -36,13 +36,13 @@ namespace GameObject
 
 	void CubeGenerator::Draw() const
 	{
-		// デバッグ時のみ可視化
-#if defined(DEBUG) || (_DEBUG)
-		this->transform->matrix
-			= Matrix::CreateScale(this->transform->scale)
-			* Matrix::CreateTranslation(this->transform->position);
-		MyDX::Dx12Wrapper::DrawBasicMesh({ this->transform->matrix, Res::MeshType::Sphere , Res::MaterialType::White });
-#endif
+//		// コメントアウト化を忘れた場合にデバッグ時のみ可視化
+//#if defined(DEBUG) || (_DEBUG)
+//		this->transform->matrix
+//			= Matrix::CreateScale(this->transform->scale)
+//			* Matrix::CreateTranslation(this->transform->position);
+//		MyDX::Dx12Wrapper::DrawBasicMesh({ this->transform->matrix, Res::MeshType::Sphere , Res::MaterialType::White });
+//#endif
 	}
 
 	void CubeGenerator::SetInterval(const float _Time)

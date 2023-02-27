@@ -29,7 +29,7 @@ namespace State::Boss
         }
 
         // 体力が一定以下になったら遷移
-        if (_Owner->GetHpPercentage() <= 95)
+        if (_Owner->GetHpPercentage() <= ActionHPPer.rot)
         {
             Effect::EfkMgr::PlayEffect(Res::EfkType::Explosion2, _Owner->transform->position, false);
             return StateList::PHASE2;

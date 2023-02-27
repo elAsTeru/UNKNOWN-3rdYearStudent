@@ -71,7 +71,7 @@ namespace State::Boss
         }
 
         // 4、体力が一定以下になったら遷移
-        if (_Owner->GetHpPercentage() <= 50)
+        if (_Owner->GetHpPercentage() <= ActionHPPer.track6)
         {
             // 回転シールドが残っていたら消す処理
             _Owner->ClearRotShields();

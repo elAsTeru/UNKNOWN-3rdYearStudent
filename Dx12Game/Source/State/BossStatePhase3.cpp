@@ -142,29 +142,29 @@ namespace State::Boss
 
 
         // シールドが減る表現
-        if (_Owner->GetHpPercentage() <= 15)
+        if (_Owner->GetHpPercentage() <= ActionHPPer.track1)
         {
             _Owner->NumOrLessTrackingShield(1);
         }
-        else if (_Owner->GetHpPercentage() <= 20)
+        else if (_Owner->GetHpPercentage() <= ActionHPPer.track2)
         {
             _Owner->NumOrLessTrackingShield(2);
         }
-        else if (_Owner->GetHpPercentage() <= 25)
+        else if (_Owner->GetHpPercentage() <= ActionHPPer.track3)
         {
             _Owner->NumOrLessTrackingShield(3);
         }
-        else if (_Owner->GetHpPercentage() <= 30)
+        else if (_Owner->GetHpPercentage() <= ActionHPPer.track4)
         {
             _Owner->NumOrLessTrackingShield(4);
         }
-        else if (_Owner->GetHpPercentage() <= 40)
+        else if (_Owner->GetHpPercentage() <= ActionHPPer.track5)
         {
             _Owner->NumOrLessTrackingShield(5);
         }
 
         // シールドが0になったら次の状態に遷移
-        if (_Owner->GetHpPercentage() <= 10)
+        if (_Owner->GetHpPercentage() <= ActionHPPer.sphere)
         {
             _Owner->ClearTrackShields();    // 処理が完成したら不要な処理...シールドがすべてなくなったら遷移するため
             _Owner->ClearLaser();
