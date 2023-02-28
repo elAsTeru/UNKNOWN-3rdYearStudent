@@ -47,7 +47,7 @@ bool App::Init()
 	Sys::ColliderMgr::OnInit();
 	GameObject::Mgr::OnInit();											// ゲームオブジェクトの初期化
 	Sys::MeshMgr::OnInit();												// メッシュ管理の初期化
-	Sys::MaterialMgr::OnInit();									// マテリアル管理の初期化
+	Sys::MaterialMgr::OnInit();											// マテリアル管理の初期化
 	MyObj::Sound::OnInit();
 	Effect::EfkMgr::OnInit();
 	Scene::Mgr::OnInit();												// シーン初期化

@@ -1,6 +1,7 @@
 ﻿#include "ScoreUI.h"
 #include "Dx12Wrapper.h"
 #include "InputMgr.h"
+#include "DXTK12Font.h"
 
 static const XMVECTOR COLOR_ORANGE = { 1, 0.65f, 0, 1.0f };
 
@@ -67,11 +68,11 @@ namespace GameObject
 	void ScoreUI::Draw() const
 	{
 		// スコア表示
-		MyDX::Dx12Wrapper::DrawFont({ score.c_str(), DirectX::XMFLOAT2(1500, 50), COLOR_ORANGE,10 * MyMath::Pi / 180,{},0.5f });
+		MyDX::DXTK12Font::DrawFont({ score.c_str(), DirectX::XMFLOAT2(1500, 50), COLOR_ORANGE,10 * MyMath::Pi / 180,{},0.5f });
 		// オブザーバー表示
 		for (auto it = this->obsDatas.begin(); it != this->obsDatas.end(); ++it)
 		{
-			MyDX::Dx12Wrapper::DrawFont({ it->drawStr, DirectX::XMFLOAT2(it->pos.x , it->pos.y), it->color,10 * MyMath::Pi / 180,{},0.3f });
+			MyDX::DXTK12Font::DrawFont({ it->drawStr, DirectX::XMFLOAT2(it->pos.x , it->pos.y), it->color,10 * MyMath::Pi / 180,{},0.3f });
 		}
 	}
 }

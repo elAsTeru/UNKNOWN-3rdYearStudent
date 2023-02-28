@@ -164,7 +164,7 @@ namespace State::Boss
         }
 
         // シールドが0になったら次の状態に遷移
-        if (_Owner->GetHpPercentage() <= ActionHPPer.sphere)
+        if (_Owner->GetHpPercentage() <= ActionHPPer.cube)
         {
             _Owner->ClearTrackShields();    // 処理が完成したら不要な処理...シールドがすべてなくなったら遷移するため
             _Owner->ClearLaser();

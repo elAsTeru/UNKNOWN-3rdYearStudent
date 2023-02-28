@@ -7,6 +7,7 @@
 #include "CSpawn.h"
 #include "CRotYAimPos.h"
 
+#include "DXTK12Font.h"
 #include "EfkMgr.h"
 
 // プレイヤーの残機増加処理はスコアの加算処理内にある
@@ -177,7 +178,7 @@ namespace GameObject
 		{
 			// UI仮置き
 			MyDX::Dx12Wrapper::Draw2DUI({ uiMatrix,Res::MeshType::Board,Res::MaterialType::U });
-			MyDX::Dx12Wrapper::DrawFont({ lifeWstr.c_str(), lifeNumFontPos, {1,1,1,1},{},{},lifeNumFontScale });
+			MyDX::DXTK12Font::DrawFont({ lifeWstr.c_str(), lifeNumFontPos, {1,1,1,1},{},{},lifeNumFontScale });
 		}
 	}
 

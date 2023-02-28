@@ -2,6 +2,7 @@
 #include "Dx12Wrapper.h"
 #include "InputMgr.h"
 #include "Logger.h"
+#include "DXTK12Font.h"
 
 static constexpr XMVECTOR COLOR_ORANGE = { 1, 0.65f, 0, 0.1f };
 static constexpr XMVECTOR COLOR_PURPLE = { 0.20f, 0.15f, 0.25f, 1.0f };
@@ -164,25 +165,25 @@ namespace GameObject
 
 		// 文字の表示
 		{
-			MyDX::Dx12Wrapper::DrawFont({ L"ステージ選択", DirectX::XMFLOAT2(650, 210 - (100 * this->expan) + 100), COLOR_PURPLE,{},{},1 });
-			MyDX::Dx12Wrapper::DrawFont({ L"ステージ選択", DirectX::XMFLOAT2(645, 205 - (100 * this->expan) + 100), COLOR_ORANGE,{},{},1.02f });
+			MyDX::DXTK12Font::DrawFont({ L"ステージ選択", DirectX::XMFLOAT2(650, 210 - (100 * this->expan) + 100), COLOR_PURPLE,{},{},1 });
+			MyDX::DXTK12Font::DrawFont({ L"ステージ選択", DirectX::XMFLOAT2(645, 205 - (100 * this->expan) + 100), COLOR_ORANGE,{},{},1.02f });
 
-			MyDX::Dx12Wrapper::DrawFont({ L"ステージ 1", DirectX::XMFLOAT2(350, 670 + (100 * this->expan) - 100), COLOR_PURPLE,{},{},0.5f });
-			MyDX::Dx12Wrapper::DrawFont({ L"ステージ 2", DirectX::XMFLOAT2(830, 670 + (100 * this->expan) - 100), COLOR_PURPLE,{},{},0.5f });
-			MyDX::Dx12Wrapper::DrawFont({ L"ステージ 3", DirectX::XMFLOAT2(1310, 670 + (100 * this->expan) - 100), COLOR_PURPLE,{},{},0.5f });
+			MyDX::DXTK12Font::DrawFont({ L"ステージ 1", DirectX::XMFLOAT2(350, 670 + (100 * this->expan) - 100), COLOR_PURPLE,{},{},0.5f });
+			MyDX::DXTK12Font::DrawFont({ L"ステージ 2", DirectX::XMFLOAT2(830, 670 + (100 * this->expan) - 100), COLOR_PURPLE,{},{},0.5f });
+			MyDX::DXTK12Font::DrawFont({ L"ステージ 3", DirectX::XMFLOAT2(1310, 670 + (100 * this->expan) - 100), COLOR_PURPLE,{},{},0.5f });
 
 			if (state == State::Idol)
 			{
 				// 選択されている文字の上にオレンジ色の文字を表示する
 				switch (this->selectNum) {
 				case 0:
-					MyDX::Dx12Wrapper::DrawFont({ L"ステージ 1", DirectX::XMFLOAT2(344, 670), COLOR_ORANGE,{},{},0.52f });
+					MyDX::DXTK12Font::DrawFont({ L"ステージ 1", DirectX::XMFLOAT2(344, 670), COLOR_ORANGE,{},{},0.52f });
 					break;
 				case 1:
-					MyDX::Dx12Wrapper::DrawFont({ L"ステージ 2", DirectX::XMFLOAT2(824, 670), COLOR_ORANGE,{},{},0.52f });
+					MyDX::DXTK12Font::DrawFont({ L"ステージ 2", DirectX::XMFLOAT2(824, 670), COLOR_ORANGE,{},{},0.52f });
 					break;
 				case 2:
-					MyDX::Dx12Wrapper::DrawFont({ L"ステージ 3", DirectX::XMFLOAT2(1304, 670), COLOR_ORANGE,{},{},0.52f });
+					MyDX::DXTK12Font::DrawFont({ L"ステージ 3", DirectX::XMFLOAT2(1304, 670), COLOR_ORANGE,{},{},0.52f });
 					break;
 				}
 			}
@@ -193,15 +194,15 @@ namespace GameObject
 			= Matrix::CreateTranslation(0, 0, 1.25 + (0.2f * this->expan) - 0.2f);
 		MyDX::Dx12Wrapper::Draw2DUI({ matrix,Res::MeshType::Board,Res::MaterialType::Gray,0.4f });
 		
-		MyDX::Dx12Wrapper::DrawFont({ L"UNKNOWN", DirectX::XMFLOAT2(140, 2 - (100 * this->expan) + 100), COLOR_ORANGE,{},{},1 });
-		MyDX::Dx12Wrapper::DrawFont({ L"㊂", DirectX::XMFLOAT2(1750, 2 - (100 * this->expan) + 100), COLOR_ORANGE,{},{},1 });
+		MyDX::DXTK12Font::DrawFont({ L"UNKNOWN", DirectX::XMFLOAT2(140, 2 - (100 * this->expan) + 100), COLOR_ORANGE,{},{},1 });
+		MyDX::DXTK12Font::DrawFont({ L"㊂", DirectX::XMFLOAT2(1750, 2 - (100 * this->expan) + 100), COLOR_ORANGE,{},{},1 });
 
 		// 下から上
 		matrix
 			= Matrix::CreateTranslation(0,0,-1.25 - (0.2f * this->expan) + 0.2f);
 		MyDX::Dx12Wrapper::Draw2DUI({ matrix,Res::MeshType::Board,Res::MaterialType::Gray,0.4f });
 
-		MyDX::Dx12Wrapper::DrawFont({ L"⇦ 選択 ⇨　Ⓐ 決定", DirectX::XMFLOAT2(140, 970 + (100 * this->expan) - 100), COLOR_ORANGE,{},{},0.5f });
+		MyDX::DXTK12Font::DrawFont({ L"⇦ 選択 ⇨　Ⓐ 決定", DirectX::XMFLOAT2(140, 970 + (100 * this->expan) - 100), COLOR_ORANGE,{},{},0.5f });
 	}
 
 	void SelectUI::UpdateSelectNum()

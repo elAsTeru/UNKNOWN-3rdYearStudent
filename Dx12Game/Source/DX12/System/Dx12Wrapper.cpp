@@ -4,13 +4,13 @@
 // https://qiita.com/katsusanw/items/c42b737d8d91d903474a
 
 #include <cmath>
+#include <d3dcompiler.h>
 #include <DirectXTK12/ResourceUploadBatch.h>
 #include <DirectXTK12/DDSTextureLoader.h>
 #include <DirectXTK12/VertexTypes.h>
 #include <DirectXTK12/CommonStates.h>
 #include <DirectXTK12/DirectXHelpers.h>
 #include <DirectXTex/d3dx12.h>
-#include <xutility>
 #include <cassert>
 #include "FileUtil.h"
 #include "DX12Helper.h"
@@ -19,8 +19,8 @@
 #include "MaterialMgr.h"
 #include "LineRes.h"
 #include "Timer.h"
-#include "MyMath.h"
 #include "Helper/EnumIterator.h"
+#include "Helper/InlineUtility.h"
 
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
@@ -54,7 +54,7 @@ namespace
         Vector3 Diffuse;        // 拡散反射
         float   Alpha;          // 透過度
         Vector3 Specular;       // 鏡面反射率
-        float Shininess;       // 鏡面反射強度
+        float Shininess;        // 鏡面反射強度
     };
 
     struct DirLightBuffer
@@ -100,14 +100,8 @@ namespace MyDX
 
             if (!InitD3D()) { return false; }
 
-            // Font
-            {
-                Render::DXTK12Font::OnInit(
-                    singleton->device.Get(),
-                    singleton->queue.Get(),
-                    singleton->fence,
-                    singleton->viewport);
-            }
+            // TKSpriteFont
+            DXTK12Font::OnInit(singleton->device.Get(),singleton->queue.Get(),singleton->fence,singleton->viewport);
 
             if (!InitRender()) { return false; }
         }
@@ -137,15 +131,14 @@ namespace MyDX
             if (SUCCEEDED(hr)) { debug->EnableDebugLayer(); }  // デバッグレイヤーを有効化
         }
 #endif
-        //// デバイスの生成
-        // フィーチャーレベルが対応していない可能性があるので、
-        // 合致する設定を探す
+        // フィーチャーレベルが対応していない可能性があるので、合致する設定を探す
         D3D_FEATURE_LEVEL levels[] = {
             D3D_FEATURE_LEVEL_12_1,
             D3D_FEATURE_LEVEL_12_0,
             D3D_FEATURE_LEVEL_11_1,
             D3D_FEATURE_LEVEL_11_0,
         };
+        // デバイスの生成
         for (auto lv : levels)
         {
             if (SUCCEEDED(D3D12CreateDevice(nullptr, lv, IID_PPV_ARGS(&singleton->device))))
@@ -327,10 +320,7 @@ namespace MyDX
         singleton->drawRectData.push_back({ _Matrix, _Color });
     }
 
-    void Dx12Wrapper::DrawFont(const FontData _FontData)
-    {
-        singleton->drawFontData.emplace_back(_FontData);
-    }
+
 
     ID3D12Resource* Dx12Wrapper::MakeTexture(int _Color)
     {
@@ -790,7 +780,7 @@ namespace MyDX
         {
             // 垂直画角とアスペクト比の設定.
             float aspect = static_cast<float>(singleton->width) / static_cast<float>(singleton->height);
-            singleton->proj = DirectX::XMMatrixPerspectiveFovLH(MyMath::ToRadians(37.5f), aspect, 1.0f, 500.0f);
+            singleton->proj = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(37.5f), aspect, 1.0f, 500.0f);
 
             // メモリ予約
             singleton->transform[DrawType::Basic].reserve(FrameCount* MaxBasicMeshCB);
@@ -1005,14 +995,7 @@ namespace MyDX
     {
         auto pCmd = singleton->graphicsCmdList;
 
-        // Font描画(描画を最後にする必要があるため)
-        pCmd->SetDescriptorHeaps(1, Render::DXTK12Font::GetDescHeap().GetAddressOf());
-        for (int i = 0; i < singleton->drawFontData.size(); ++i)
-        {
-            Render::DXTK12Font::PrintFont(pCmd, singleton->drawFontData[i].str, singleton->drawFontData[i].pos, singleton->drawFontData[i].color, singleton->drawFontData[i].rotation, singleton->drawFontData[i].origin, singleton->drawFontData[i].scale);
-        }
-        singleton->drawFontData.clear();
-
+        DXTK12Font::RenderingFonts(pCmd);
 
         singleton->PostDrawToPera1();
         //singleton->DrawHorizontalBokeh();
@@ -1070,7 +1053,7 @@ namespace MyDX
         Present(1);
 
         // Fontのメモリリークを防止
-        Render::DXTK12Font::Commit(singleton->queue.Get());
+        DXTK12Font::Commit(singleton->queue.Get());
     }
 
     void Dx12Wrapper::Term()
@@ -1097,7 +1080,7 @@ namespace MyDX
             singleton->transform.clear();
         }
 
-        Render::DXTK12Font::OnTerm();       // フォント終了
+        DXTK12Font::OnTerm();       // フォント終了
     }
 
     void Dx12Wrapper::CreatePeraResource()

@@ -308,7 +308,7 @@
     <ClInclude Include="Source\DX12\System\IndexBuffer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Source\DX12\System\InlineUtil.h">
+    <ClInclude Include="Source\System\Helper\InlineUtility.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Source\DX12\Resource\Material.h">

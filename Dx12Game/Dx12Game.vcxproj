@@ -328,7 +328,7 @@
     <ClInclude Include="Source\Resource\LineRes.h" />
     <ClInclude Include="Source\System\FileUtil.h" />
     <ClInclude Include="Source\DX12\System\IndexBuffer.h" />
-    <ClInclude Include="Source\DX12\System\InlineUtil.h" />
+    <ClInclude Include="Source\System\Helper\InlineUtility.h" />
     <ClInclude Include="Source\DX12\Resource\Material.h" />
     <ClInclude Include="Source\DX12\Resource\Mesh.h" />
     <ClInclude Include="Source\DX12\System\Pool.h" />

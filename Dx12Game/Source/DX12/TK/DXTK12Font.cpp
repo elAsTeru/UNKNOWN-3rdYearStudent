@@ -5,7 +5,7 @@
 
 #pragma comment(lib,"DirectXTK12.lib")
 
-namespace MyDX::Render
+namespace MyDX
 {
 	DXTK12Font* DXTK12Font::singleton = nullptr;
 
@@ -32,6 +32,23 @@ namespace MyDX::Render
 	{
 		singleton->memory->Commit(_CmdQue); 
 	}
+
+	void DXTK12Font::DrawFont(const FontData _FontData)
+	{
+		singleton->drawFontData.emplace_back(_FontData);
+	}
+
+	void DXTK12Font::RenderingFonts(ID3D12GraphicsCommandList* _GCList)
+	{
+		_GCList->SetDescriptorHeaps(1, singleton->heapForSpriteFont.GetAddressOf());
+		
+		for (int i = 0; i < singleton->drawFontData.size(); ++i)
+		{
+			DXTK12Font::PrintFont(_GCList, singleton->drawFontData[i].str, singleton->drawFontData[i].pos, singleton->drawFontData[i].color, singleton->drawFontData[i].rotation, singleton->drawFontData[i].origin, singleton->drawFontData[i].scale);
+		}
+		singleton->drawFontData.clear();
+	}
+
 	void DXTK12Font::OnInit(ID3D12Device* _Device, ID3D12CommandQueue* _CmdQue, Fence& _Fence, D3D12_VIEWPORT& _Viewport)
 	{
 		if (!singleton)
@@ -48,14 +65,8 @@ namespace MyDX::Render
 					DXGI_FORMAT_D32_FLOAT};
 			DirectX::SpriteBatchPipelineStateDescription pd(rtState);
 			singleton->spriteBatch = new DirectX::SpriteBatch(_Device, resUploadBatch, pd);
-			
-			std::wstring absolutePath;
-			// 相対パスからパス探索、成功なら絶対パスに変換
-			if (!SearchFilePath(L"../../Dx12Game/Resource/Font/Meiryo_72.spritefont",absolutePath))
-			{
-				ELOG("Error : Font File Not Found");
-			}
-			wchar_t* path = absolutePath.data();
+
+			std::wstring filePath = L"Resource/Font/Meiryo_72.spritefont";
 
 			// Sprite Font オブジェクトの初期化
 			singleton->heapForSpriteFont = CreateDescHeapForSpriteFont();
@@ -63,7 +74,7 @@ namespace MyDX::Render
 			(
 				_Device,
 				resUploadBatch,
-				path,
+				filePath.c_str(),
 				singleton->heapForSpriteFont->GetCPUDescriptorHandleForHeapStart(),
 				singleton->heapForSpriteFont->GetGPUDescriptorHandleForHeapStart()
 			);

@@ -1,42 +1,29 @@
 ﻿#pragma once
 
-//Include
-#include <cstdint>
 #include <d3d12.h>
-#include <dxgi1_4.h>
-#include <d3dcompiler.h>
 #include <array>
 #include <unordered_map>
+#include <DirectXTK12/SimpleMath.h>
+
 #include "ComPtr.h"
 #include "DescriptorPool.h"
 #include "ColorTarget.h"
 #include "DepthTarget.h"
 #include "CommandList.h"
 #include "Fence.h"
-#include "Resource/Mesh.h"
-#include "Resource/Texture.h"
-#include "Resource/Material.h"
-#include "InlineUtil.h"
 #include "ConstantBuffer.h"
 #include "MaterialType.h"
 #include "RootSignature.h"
-//#include "Camera.h"
 #include "MeshType.h"
-#include <DirectXTK12/SimpleMath.h>
+
+#include "Resource/Mesh.h"
+#include "Resource/Texture.h"
+#include "Resource/Material.h"
+
 using namespace DirectX::SimpleMath;
 
 namespace MyDX
 {
-	struct FontData
-	{
-		std::wstring			str{};		// 表示する文字列
-		DirectX::XMFLOAT2		pos{};		// 座標
-		DirectX::XMVECTOR		color{};	// 色
-		float					rotation{};	// 回転
-		DirectX::XMFLOAT2		origin{};	// 
-		float					scale = 1;	// サイズ
-	};
-
 	// D3D12Wrapper class
 	class Dx12Wrapper
 	{
@@ -73,11 +60,13 @@ namespace MyDX
 			Res::MaterialType matType;
 			float alpha = 1;
 		};
+
 		struct LineData
 		{
 			std::vector<DirectX::XMFLOAT3> vertices;	// 線の頂点データ
 			VertexBuffer lineVB;						// 専用頂点バッファ
 		};
+
 		struct RectData
 		{
 			DirectX::XMMATRIX	matrix;					// 座標系
@@ -106,7 +95,6 @@ namespace MyDX
 		/// <param name="_RectData">座標系 / マテリアル番号</param>
 		static void DrawRect(const DirectX::XMMATRIX& _Matrix, const DirectX::XMFLOAT4& _Color);
 		static void Draw2DUI(const ObjectData& _2DUIData);
-		static void DrawFont(const FontData _FontData);
 
 		static ID3D12Resource* MakeTexture(int _Color);
 
@@ -127,7 +115,6 @@ namespace MyDX
 		std::vector<ObjectData> drawBasicMeshData;	// 標準描画メッシュデータ
 		std::vector<ObjectData> draw2DUIData;		// 2D表示のUIデータ
 		std::vector<RectData> drawRectData;
-		std::vector<FontData> drawFontData;
 		
 		DirectX::XMFLOAT3 playerPos{};
 		LineData lineData[4];						// 線データ

@@ -10,6 +10,7 @@
 #include "Helper/EnumIterator.h"
 #include "Helper/StringHelper.h"
 #include "Tool/JsonLoader.h"
+#include "Helper/InlineUtility.h"
 
 // テスト用
 //#include "Dir.h

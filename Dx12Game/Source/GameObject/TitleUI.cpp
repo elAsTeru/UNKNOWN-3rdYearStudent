@@ -1,6 +1,7 @@
 ﻿#include "TitleUI.h"
 #include "Dx12Wrapper.h"
 #include "InputMgr.h"
+#include "DXTK12Font.h"
 
 namespace GameObject
 {
@@ -95,8 +96,8 @@ namespace GameObject
 			* Matrix::CreateTranslation(-0.45f, 0, 0.045f);
 		MyDX::Dx12Wrapper::Draw2DUI({ titleMatrix,Res::MeshType::Board,Res::MaterialType::U2});
 
-		MyDX::Dx12Wrapper::DrawFont({ L"NKNOWN", DirectX::XMFLOAT2(290,410), BaseColor - Vector4(this->fadeValue),{},{},1 });
-		MyDX::Dx12Wrapper::DrawFont({ L"Ⓐ プレイ", DirectX::XMFLOAT2(330,580), blinkColor - Vector4(this->fadeValue),{},{},0.7f });
+		MyDX::DXTK12Font::DrawFont({ L"NKNOWN", DirectX::XMFLOAT2(290,410), BaseColor - Vector4(this->fadeValue),{},{},1 });
+		MyDX::DXTK12Font::DrawFont({ L"Ⓐ プレイ", DirectX::XMFLOAT2(330,580), blinkColor - Vector4(this->fadeValue),{},{},0.7f });
 
 		// フェード処理用の板
 		XMMATRIX matrix

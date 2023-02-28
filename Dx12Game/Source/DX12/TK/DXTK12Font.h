@@ -9,8 +9,18 @@
 
 class Fence;
 
-namespace MyDX::Render
+namespace MyDX
 {
+	struct FontData
+	{
+		std::wstring			str{};		// 表示する文字列
+		DirectX::XMFLOAT2		pos{};		// 座標
+		DirectX::XMVECTOR		color{};	// 色
+		float					rotation{};	// 回転
+		DirectX::XMFLOAT2		origin{};	// 
+		float					scale = 1;	// サイズ
+	};
+
 	class DXTK12Font
 	{
 		DXTK12Font();
@@ -22,9 +32,13 @@ namespace MyDX::Render
 		static void OnTerm();																								// 使用終了
 
 		// Public Method
-		static ComPtr<ID3D12DescriptorHeap> GetDescHeap() { return singleton->heapForSpriteFont; }
 		static void PrintFont(ID3D12GraphicsCommandList* _CmdList, std::wstring _Text, DirectX::XMFLOAT2 _Pos, DirectX::XMVECTOR _Color, float _Rot, DirectX::XMFLOAT2 _Origin, float _Sca);
 		static void Commit(ID3D12CommandQueue* _CmdQue);	// 文字のメモリリークを防止する
+
+		/// <summary> 描画文字データを積む </summary>
+		static void DrawFont(const FontData _FontData);
+		/// <summary> DrawFontで積んだ文字を描画する(※最後に描画を行う必要がある) </summary>
+		static void RenderingFonts(ID3D12GraphicsCommandList* _GCList);
 
 	private:
 		// Private Variable
@@ -33,6 +47,7 @@ namespace MyDX::Render
 		DirectX::SpriteBatch*			spriteBatch;		// スプライト表示用オブジェクト
 		ComPtr<ID3D12DescriptorHeap>	heapForSpriteFont;
 		ID3D12Device*					device;
+		std::vector<FontData>			drawFontData;
 
 		// Private Method
 		static ComPtr<ID3D12DescriptorHeap>	CreateDescHeapForSpriteFont();
