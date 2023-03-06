@@ -12,9 +12,9 @@
 #include "CommandList.h"
 #include "Fence.h"
 #include "ConstantBuffer.h"
-#include "MaterialType.h"
+#include "Resource/MaterialType.h"
 #include "RootSignature.h"
-#include "MeshType.h"
+#include "Resource/MeshType.h"
 
 #include "Resource/Mesh.h"
 #include "Resource/Texture.h"
@@ -53,7 +53,7 @@ namespace MyDX
 		};
 
 	public:
-		struct ObjectData
+		struct DrawMeshDesc
 		{
 			DirectX::XMMATRIX matrix;
 			Res::MeshType mesh;
@@ -79,22 +79,19 @@ namespace MyDX
 		static void RenderBegin();
 		static void Render();
 		static void RenderEnd();
-		static Mesh* InitMesh(std::vector<ResMesh>& _ResMesh, Mesh* _MeshData);
 
 		// 仮置き
 		static void SetPlayerPos(const DirectX::XMFLOAT3& _Pos) { singleton->playerPos = _Pos; }
-
-		/// <summary>
-		/// メッシュを描画する
-		/// </summary>
-		/// <param name="_Data">座標系 / メッシュ番号 / マテリアル番号</param>
-		static void DrawBasicMesh(const ObjectData& _MeshData);
+		/// <summary> 描画メッシュデータを積む </summary>
+		static void DrawMesh(const DirectX::XMMATRIX _Mat, Res::MeshType _MeshType, Res::MaterialType _MatType, const float _Alpha = 1.0f);
+		/// <summary> 描画メッシュ2Dデータを積む </summary>
+		static void DrawMesh2D(const DirectX::XMMATRIX _Mat, Res::MeshType _MeshType, Res::MaterialType _MatType, const float _Alpha = 1.0f);
+		
 		/// <summary>
 		/// 線による四角を描画する
 		/// </summary>
 		/// <param name="_RectData">座標系 / マテリアル番号</param>
 		static void DrawRect(const DirectX::XMMATRIX& _Matrix, const DirectX::XMFLOAT4& _Color);
-		static void Draw2DUI(const ObjectData& _2DUIData);
 
 		static ID3D12Resource* MakeTexture(int _Color);
 
@@ -107,13 +104,13 @@ namespace MyDX
 
 		static ID3D12Device* GetDevice() { return singleton->device.Get(); }
 		static ID3D12CommandQueue* GetQue() { return singleton->queue.Get(); }
-		static ID3D12GraphicsCommandList* GetCmdList() { return singleton->graphicsCmdList; }
+		static ID3D12GraphicsCommandList* GetGCList() { return singleton->gcList; }
 		static DirectX::XMMATRIX GetViewMatrix() { return singleton->view; }
 		static DirectX::XMMATRIX GetProjMatrix() { return singleton->proj; }
 	private:
 		//// 描画データ
-		std::vector<ObjectData> drawBasicMeshData;	// 標準描画メッシュデータ
-		std::vector<ObjectData> draw2DUIData;		// 2D表示のUIデータ
+		std::vector<DrawMeshDesc> drawMeshData;		// 標準描画メッシュデータ
+		std::vector<DrawMeshDesc> drawMesh2DData;	// 2D表示のUIデータ
 		std::vector<RectData> drawRectData;
 		
 		DirectX::XMFLOAT3 playerPos{};
@@ -130,30 +127,30 @@ namespace MyDX
 
 			Basic = Begin,	// 通常ポリ
 			Line,			// 通常ライン用
-			Ui,				// UI用
+			UI,				// UI用
 
 			End
 		};
 
 		//Private Variable
-		static const uint32_t FrameCount = 2;	// フレームバッファ数
+		static const uint8_t FrameCount = 2;	// フレームバッファ数
 
 		HWND		hWnd;		// ウィンドウハンドル
 		uint32_t	width;		// ウィンドウ幅
 		uint32_t	height;		// ウィンドウ高
 
-		ComPtr<ID3D12Device>		device;								//デバイス
-		ComPtr<ID3D12CommandQueue>	queue;								//コマンドキュー
-		ComPtr<IDXGISwapChain3>		swapChain;							//スワップチェイン
-		ColorTarget					colorTarget[FrameCount];			//カラーターゲット
-		DepthTarget					depthTarget;						//深度ターゲット
-		DescriptorPool*				pool[POOL_COUNT];					//ディスクリプタプール
-		CommandList					cmdList;							//コマンドリスト
-		ID3D12GraphicsCommandList*	graphicsCmdList;					// グラフィックスコマンドリスト
-		Fence						fence;								//フェンス
-		uint32_t					frameIndex;							//フレーム番号
-		D3D12_VIEWPORT				viewport;							//ビューポート
-		D3D12_RECT					scissor;							//シザー矩形
+		ComPtr<ID3D12Device>		device;						//デバイス
+		ComPtr<ID3D12CommandQueue>	queue;						//コマンドキュー
+		ComPtr<IDXGISwapChain3>		swapChain;					//スワップチェイン
+		ColorTarget					colorTarget[FrameCount];	//カラーターゲット
+		DepthTarget					depthTarget;				//深度ターゲット
+		DescriptorPool*				pool[POOL_COUNT];			//ディスクリプタプール
+		CommandList					cmdList;					//コマンドリスト
+		ID3D12GraphicsCommandList*	gcList;						// グラフィックスコマンドリスト
+		Fence						fence;						//フェンス
+		uint32_t					frameIndex;					//フレーム番号
+		D3D12_VIEWPORT				viewport;					//ビューポート
+		D3D12_RECT					scissor;					//シザー矩形
 
 		Matrix						view;
 		Matrix						proj;

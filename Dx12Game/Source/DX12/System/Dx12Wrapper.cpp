@@ -13,14 +13,14 @@
 #include <DirectXTex/d3dx12.h>
 #include <cassert>
 #include "FileUtil.h"
-#include "DX12Helper.h"
+#include "Helper/DX12Helper.h"
 #include "Logger.h"
-#include "DXTK12Font.h"
+#include "Tool/DXTK12Font.h"
 #include "MaterialMgr.h"
-#include "LineRes.h"
+#include "Resource/LineRes.h"
 #include "Timer.h"
-#include "Helper/EnumIterator.h"
-#include "Helper/InlineUtility.h"
+#include "EnumIterator.h"
+#include "InlineUtility.h"
 
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
@@ -33,7 +33,7 @@
 namespace
 {
     // Transform structure
-    struct alignas(256) Transform
+    struct alignas(256) CTransform
     {
         DirectX::XMMATRIX   World;      // ワールド行列です
         DirectX::XMMATRIX   View;       // ビュー行列です
@@ -305,14 +305,14 @@ namespace MyDX
         return true;
     }
 
-    void Dx12Wrapper::DrawBasicMesh(const ObjectData& _MeshData)
+    void Dx12Wrapper::DrawMesh(const DirectX::XMMATRIX _Mat, Res::MeshType _MeshType, Res::MaterialType _MatType, const float _Alpha)
     {
-        singleton->drawBasicMeshData.emplace_back(_MeshData);
+        singleton->drawMeshData.emplace_back(DrawMeshDesc(_Mat, _MeshType, _MatType, _Alpha));
     }
 
-    void Dx12Wrapper::Draw2DUI(const ObjectData& _2DUIData)
+    void Dx12Wrapper::DrawMesh2D(const DirectX::XMMATRIX _Mat, Res::MeshType _MeshType, Res::MaterialType _MatType, const float _Alpha)
     {
-        singleton->draw2DUIData.emplace_back(_2DUIData);
+        singleton->drawMesh2DData.emplace_back(DrawMeshDesc(_Mat, _MeshType, _MatType, _Alpha));
     }
 
     void Dx12Wrapper::DrawRect(const DirectX::XMMATRIX& _Matrix, const DirectX::XMFLOAT4& _Color)
@@ -410,42 +410,12 @@ namespace MyDX
         singleton->frameIndex = singleton->swapChain->GetCurrentBackBufferIndex();
     }
 
-    // 後から名前をdx12用への変換か他の場所に移動させる
-    /// <summary>
-    /// メッシュをDX12用への変換、現在仮置き、RenderComponent作成後に変更する
-    /// </summary>
-    Mesh* Dx12Wrapper::InitMesh(std::vector<ResMesh>& _ResMesh, Mesh* _MeshData)
-    {
-         // メッシュ生成
-        auto mesh = new (std::nothrow) Mesh();
-        // メッシュの初期化
-        for (size_t i = 0; i < _ResMesh.size(); ++i)
-        {
-            // チェック.
-            if (mesh == nullptr)
-            {
-                ELOG("Error : Out of memory.");
-                return nullptr;
-            }
-
-            // 初期化処理.
-            if (!mesh->Init(singleton->device.Get(), _ResMesh[i]))
-            {
-                ELOG("Error : Mesh Initialize Failed.");
-                delete mesh;
-                return nullptr;
-            }
-        }
-        // モデルの番号を返す
-        return mesh;
-    }
-
     bool Dx12Wrapper::InitRender()
     {
         {
             int materialSize = 1;   // 今はすべてのマテリアルは１枚のテクスチャで作成
             // マテリアルの初期化
-            typedef System::Helper::EnumIterator < Res::MaterialType, Res::MaterialType::Begin, Res::MaterialType::End > typeItr;
+            typedef EnumIterator < Res::MaterialType, Res::MaterialType::Begin, Res::MaterialType::End > typeItr;
             for (auto itr = typeItr(); itr != typeItr(Res::MaterialType::End); ++itr)
             {
                 if (!singleton->materials[*itr].Init(singleton->device.Get(), singleton->pool[POOL_TYPE_RES], sizeof(MaterialBuffer), materialSize))
@@ -663,16 +633,16 @@ namespace MyDX
             ComPtr<ID3DBlob> vsBasicBlob;
             ComPtr<ID3DBlob> psBasicBlob;
             ComPtr<ID3DBlob> psBasic2DBlob;
-            ComPtr<ID3DBlob> vsColorBlob;
-            ComPtr<ID3DBlob> psColorBlob;
+            ComPtr<ID3DBlob> vsGeometryBlob;
+            ComPtr<ID3DBlob> psGeometryBlob;
 
             // 標準用
             singleton->LoadShader(L"Shader/cso/BasicVS.cso", vsBasicBlob);
             singleton->LoadShader(L"Shader/cso/BasicPS.cso", psBasicBlob);
             singleton->LoadShader(L"Shader/cso/Basic2DPS.cso", psBasic2DBlob);
             // 線用
-            singleton->LoadShader(L"Shader/cso/ColorVS.cso", vsColorBlob);
-            singleton->LoadShader(L"Shader/cso/ColorPS.cso", psColorBlob);
+            singleton->LoadShader(L"Shader/cso/GeometryVS.cso", vsGeometryBlob);
+            singleton->LoadShader(L"Shader/cso/GeometryPS.cso", psGeometryBlob);
 
             // ラスタライザの設定(アンチエイリアシング)
             D3D12_RASTERIZER_DESC rasterDesc{};
@@ -717,8 +687,8 @@ namespace MyDX
                 desc.SampleDesc.Count                               = 1;
                 desc.SampleDesc.Quality                             = 0;
                 // GPS生成
-                auto hr = singleton->device->CreateGraphicsPipelineState(&desc, IID_PPV_ARGS(singleton->pso[DrawType::Ui].GetAddressOf()));
-                CheckResult(hr);
+                auto hr = singleton->device->CreateGraphicsPipelineState(&desc, IID_PPV_ARGS(singleton->pso[DrawType::UI].GetAddressOf()));
+                Helper::CheckResult(hr);
 
                 // 3D
                 desc.PS = { psBasicBlob->GetBufferPointer(), psBasicBlob->GetBufferSize() };
@@ -728,7 +698,7 @@ namespace MyDX
                 desc.RTVFormats[2] = singleton->colorTarget[0].GetViewDesc().Format;
                 // GPS生成
                 hr = singleton->device->CreateGraphicsPipelineState(&desc, IID_PPV_ARGS(singleton->pso[DrawType::Basic].GetAddressOf()));
-                CheckResult(hr);
+                Helper::CheckResult(hr);
             }
 
             // 線用
@@ -736,8 +706,8 @@ namespace MyDX
                 D3D12_GRAPHICS_PIPELINE_STATE_DESC desc{};
                 desc.InputLayout = Res::LineVertex::InputLineLayout;
                 desc.pRootSignature = singleton->BasicRS.Get();
-                desc.VS = { vsColorBlob->GetBufferPointer(), vsColorBlob->GetBufferSize() };
-                desc.PS = { psColorBlob->GetBufferPointer(), psColorBlob->GetBufferSize() };
+                desc.VS = { vsGeometryBlob->GetBufferPointer(), vsGeometryBlob->GetBufferSize() };
+                desc.PS = { psGeometryBlob->GetBufferPointer(), psGeometryBlob->GetBufferSize() };
                 desc.RasterizerState = rasterDesc;
                 desc.BlendState.RenderTarget->BlendEnable = TRUE;                                       // 加算、乗算、α等のブレンドを行うか
                 desc.BlendState.RenderTarget->LogicOpEnable = FALSE;                                    // 論理演算するかどうか ※上かどちらかのみ
@@ -794,7 +764,7 @@ namespace MyDX
                 }
 
                 // 定数バッファ初期化
-                if (!pCB->Init(singleton->device.Get(), singleton->pool[POOL_TYPE_RES], sizeof(Transform) * 2))
+                if (!pCB->Init(singleton->device.Get(), singleton->pool[POOL_TYPE_RES], sizeof(CTransform) * 2))
                 {
                     ELOG("Error : ConstantBuffer::Init() Failed.");
                     return false;
@@ -807,7 +777,7 @@ namespace MyDX
                 singleton->upward = Vector3(0.0f, 0.0f, 1.0f);
 
                 // 変換行列を設定
-                auto ptr = pCB->GetPtr<Transform>();
+                auto ptr = pCB->GetPtr<CTransform>();
                 ptr->View = DirectX::XMMatrixLookAtLH(singleton->eyePos, singleton->targetPos, singleton->upward);
                 ptr->Proj = singleton->proj;
                 ptr->Alpha = 1;
@@ -845,7 +815,7 @@ namespace MyDX
             singleton->transform[DrawType::Line].shrink_to_fit();
 
 
-            singleton->transform[DrawType::Ui].reserve(FrameCount * MaxUICB);
+            singleton->transform[DrawType::UI].reserve(FrameCount * MaxUICB);
             for (auto i = 0u; i < FrameCount * MaxUICB; ++i)
             {
                 auto pCB = new (std::nothrow) ConstantBuffer();
@@ -856,7 +826,7 @@ namespace MyDX
                 }
 
                 // 定数バッファ初期化
-                if (!pCB->Init(singleton->device.Get(), singleton->pool[POOL_TYPE_RES], sizeof(Transform) * 2))
+                if (!pCB->Init(singleton->device.Get(), singleton->pool[POOL_TYPE_RES], sizeof(CTransform) * 2))
                 {
                     ELOG("Error : ConstantBuffer::Init() Failed.");
                     return false;
@@ -868,15 +838,15 @@ namespace MyDX
                 auto upward = Vector3::UnitZ;
 
                 // 変換行列を設定
-                auto ptr = pCB->GetPtr<Transform>();
+                auto ptr = pCB->GetPtr<CTransform>();
                 ptr->World = Matrix::Identity;
                 ptr->View = DirectX::XMMatrixLookAtLH(eyePos, targetPos, upward);
                 ptr->Proj = singleton->proj;
                 ptr->Alpha = 1;
 
-                singleton->transform[DrawType::Ui].push_back(pCB);
+                singleton->transform[DrawType::UI].push_back(pCB);
             }
-            singleton->transform[DrawType::Ui].shrink_to_fit();
+            singleton->transform[DrawType::UI].shrink_to_fit();
         }
         return true;
     }
@@ -902,19 +872,19 @@ namespace MyDX
             }
 
             // メッシュデータ
-            for (int i = 0; i < singleton->drawBasicMeshData.size(); ++i)
+            for (int i = 0; i < singleton->drawMeshData.size(); ++i)
             {
-                auto mesh = singleton->transform[DrawType::Basic][singleton->frameIndex * 2 + i]->GetPtr<Transform>();
+                auto mesh = singleton->transform[DrawType::Basic][singleton->frameIndex * 2 + i]->GetPtr<CTransform>();
                 mesh->View = singleton->view;
-                mesh->World = singleton->drawBasicMeshData[i].matrix;
+                mesh->World = singleton->drawMeshData[i].matrix;
             }
 
             // UIのメッシュデータ(view行列なし)
-            for (int i = 0; i < singleton->draw2DUIData.size(); ++i)
+            for (int i = 0; i < singleton->drawMesh2DData.size(); ++i)
             {
-                auto uiMesh = singleton->transform[DrawType::Ui][singleton->frameIndex * 2 + i]->GetPtr<Transform>();
-                uiMesh->World = singleton->draw2DUIData[i].matrix;
-                uiMesh->Alpha = singleton->draw2DUIData[i].alpha;
+                auto uiMesh = singleton->transform[DrawType::UI][singleton->frameIndex * 2 + i]->GetPtr<CTransform>();
+                uiMesh->World = singleton->drawMesh2DData[i].matrix;
+                uiMesh->Alpha = singleton->drawMesh2DData[i].alpha;
             }
         }
     }
@@ -922,7 +892,7 @@ namespace MyDX
     void Dx12Wrapper::RenderBegin()
     {
         // コマンドの記録を開始
-        auto pCmd = singleton->graphicsCmdList = singleton->cmdList.Reset();
+        auto pCmd = singleton->gcList = singleton->cmdList.Reset();
 
         // ペラテスト用(マルチパスレンダリング)
         singleton->PreDrawToPera1();
@@ -930,7 +900,7 @@ namespace MyDX
 
     void Dx12Wrapper::Render()
     {
-        auto pCmd = singleton->graphicsCmdList;
+        auto pCmd = singleton->gcList;
 
         // ここが描画処理
         {
@@ -967,33 +937,33 @@ namespace MyDX
             pCmd->SetPipelineState(singleton->pso[DrawType::Basic].Get());
             pCmd->SetGraphicsRootSignature(singleton->BasicRS.Get());
             pCmd->SetGraphicsRootConstantBufferView(3, singleton->dirLight->GetAddress());
-            for (int i = 0; i < singleton->drawBasicMeshData.size(); ++i)
+            for (int i = 0; i < singleton->drawMeshData.size(); ++i)
             {
                 pCmd->SetGraphicsRootConstantBufferView(0, singleton->transform[DrawType::Basic][singleton->frameIndex * 2 + i]->GetAddress());
-                pCmd->SetGraphicsRootDescriptorTable(1, singleton->materials[singleton->drawBasicMeshData[i].matType].GetTextureHandle(0, TU_BASE_COLOR));
+                pCmd->SetGraphicsRootDescriptorTable(1, singleton->materials[singleton->drawMeshData[i].matType].GetTextureHandle(0, TU_BASE_COLOR));
                 pCmd->SetGraphicsRootDescriptorTable(2, singleton->materials[Res::MaterialType::Gray2].GetTextureHandle(0, TU_BASE_COLOR));
-                Sys::MeshMgr::GetMesh(singleton->drawBasicMeshData[i].mesh).Draw(pCmd);
+                MyDX::MeshMgr::GetMesh(singleton->drawMeshData[i].mesh).Draw(pCmd);
             }
             // メッシュ描画リストのクリア
-            singleton->drawBasicMeshData.clear();
+            singleton->drawMeshData.clear();
 
             // UIメッシュ
-            pCmd->SetPipelineState(singleton->pso[DrawType::Ui].Get());
+            pCmd->SetPipelineState(singleton->pso[DrawType::UI].Get());
             pCmd->SetGraphicsRootSignature(singleton->BasicRS.Get());
-            for (int i = 0; i < singleton->draw2DUIData.size(); ++i)
+            for (int i = 0; i < singleton->drawMesh2DData.size(); ++i)
             {
-                pCmd->SetGraphicsRootConstantBufferView(0, singleton->transform[DrawType::Ui][singleton->frameIndex * 2 + i]->GetAddress());
-                pCmd->SetGraphicsRootDescriptorTable(1, singleton->materials[singleton->draw2DUIData[i].matType].GetTextureHandle(0, TU_BASE_COLOR));
+                pCmd->SetGraphicsRootConstantBufferView(0, singleton->transform[DrawType::UI][singleton->frameIndex * 2 + i]->GetAddress());
+                pCmd->SetGraphicsRootDescriptorTable(1, singleton->materials[singleton->drawMesh2DData[i].matType].GetTextureHandle(0, TU_BASE_COLOR));
                 pCmd->SetGraphicsRootDescriptorTable(2, singleton->materials[Res::MaterialType::Black].GetTextureHandle(0, TU_BASE_COLOR));
-                Sys::MeshMgr::GetMesh(singleton->draw2DUIData[i].mesh).Draw(pCmd);
+                MyDX::MeshMgr::GetMesh(singleton->drawMesh2DData[i].mesh).Draw(pCmd);
             }
-            singleton->draw2DUIData.clear();
+            singleton->drawMesh2DData.clear();
         }
     }
 
     void Dx12Wrapper::RenderEnd()
     {
-        auto pCmd = singleton->graphicsCmdList;
+        auto pCmd = singleton->gcList;
 
         DXTK12Font::RenderingFonts(pCmd);
 
@@ -1060,7 +1030,7 @@ namespace MyDX
     {
         // マテリアル破棄
         {
-            typedef System::Helper::EnumIterator < Res::MaterialType, Res::MaterialType::Begin, Res::MaterialType::End > typeItr;
+            typedef EnumIterator < Res::MaterialType, Res::MaterialType::Begin, Res::MaterialType::End > typeItr;
             for (auto itr = typeItr(); itr != typeItr(Res::MaterialType::End); ++itr)
             {
                 singleton->materials[*itr].Term();
@@ -1069,7 +1039,7 @@ namespace MyDX
 
         // 変換バッファ破棄
         {
-            typedef System::Helper::EnumIterator < DrawType, DrawType::Begin, DrawType::End > typeItr;
+            typedef EnumIterator < DrawType, DrawType::Begin, DrawType::End > typeItr;
             for (auto itr = typeItr(); itr != typeItr(DrawType::End); ++itr)
             {
                 for (auto tf : singleton->transform[*itr])
@@ -1104,7 +1074,7 @@ namespace MyDX
                 &resDesc,D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
                 &clearValue,IID_PPV_ARGS(res.ReleaseAndGetAddressOf())
             );
-            CheckResult(result);
+            Helper::CheckResult(result);
         }
 
         // RTV用ヒープ作成
@@ -1113,7 +1083,7 @@ namespace MyDX
             &heapDesc,
             IID_PPV_ARGS(singleton->peraRTVHeap.ReleaseAndGetAddressOf())
         );
-        CheckResult(result);
+        Helper::CheckResult(result);
         D3D12_RENDER_TARGET_VIEW_DESC rtvDesc = {};
         rtvDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
         rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -1138,7 +1108,7 @@ namespace MyDX
         heapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
         result = singleton->device->CreateDescriptorHeap(&heapDesc,
             IID_PPV_ARGS(singleton->peraSRVHeap.ReleaseAndGetAddressOf()));
-        CheckResult(result);
+        Helper::CheckResult(result);
 
 
         // 本だと先にインクリメントしているが、多分SRVを作成後に書く場合の書き方
@@ -1176,7 +1146,7 @@ namespace MyDX
 
     void Dx12Wrapper::PreDrawToPera1()
     {
-        auto pCmd = singleton->graphicsCmdList;
+        auto pCmd = singleton->gcList;
         auto handleDSV = singleton->depthTarget.GetHandleDSV();
 
         // レンダーターゲットを切り替える前にリソースのステートをレンダーターゲットに切り替える
@@ -1192,7 +1162,7 @@ namespace MyDX
             D3D12_RESOURCE_STATE_RENDER_TARGET
         );
 
-        CD3DX12_CPU_DESCRIPTOR_HANDLE handles[3];
+        CD3DX12_CPU_DESCRIPTOR_HANDLE handles[3]{};
         D3D12_CPU_DESCRIPTOR_HANDLE baseH = singleton->peraRTVHeap->GetCPUDescriptorHandleForHeapStart();
         auto incSize = singleton->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
         uint32_t offset = 0;
@@ -1266,14 +1236,14 @@ namespace MyDX
             rsBlob.ReleaseAndGetAddressOf(),
             erroBlob.ReleaseAndGetAddressOf()
         );
-        CheckResult(result);
+        Helper::CheckResult(result);
         result = singleton->device->CreateRootSignature(
             0,
             rsBlob->GetBufferPointer(),
             rsBlob->GetBufferSize(),
             IID_PPV_ARGS(singleton->peraRS.ReleaseAndGetAddressOf())
         );
-        CheckResult(result);
+        Helper::CheckResult(result);
 
         // ペラ用シェーダー読み込み
         ComPtr<ID3DBlob> vsPeraBlob;
@@ -1316,7 +1286,7 @@ namespace MyDX
             &gpsDesc,
             IID_PPV_ARGS(singleton->peraPSO1.ReleaseAndGetAddressOf())
         );
-        CheckResult(result);
+        Helper::CheckResult(result);
 
         //// 2枚目用ピクセルシェーダー
         //result = D3DCompileFromFile(
@@ -1344,7 +1314,7 @@ namespace MyDX
             psPeraBlob.ReleaseAndGetAddressOf(),
             erroBlob.ReleaseAndGetAddressOf()
         );
-        CheckResult(result, erroBlob.Get());
+        Helper::CheckResult(result, erroBlob.Get());
         // 2枚目用パイプライン
         gpsDesc.PS = CD3DX12_SHADER_BYTECODE(psPeraBlob.Get());
         gpsDesc.NumRenderTargets = 2;
@@ -1354,7 +1324,7 @@ namespace MyDX
             &gpsDesc,
             IID_PPV_ARGS(singleton->blurPSO.ReleaseAndGetAddressOf())
         );
-        CheckResult(result);
+        Helper::CheckResult(result);
     }
 
     void Dx12Wrapper::CreatePeraVertex()
@@ -1381,7 +1351,7 @@ namespace MyDX
             D3D12_RESOURCE_STATE_GENERIC_READ,
             nullptr,
             IID_PPV_ARGS(singleton->peraVB.ReleaseAndGetAddressOf()));
-        CheckResult(result);
+        Helper::CheckResult(result);
  
         // マップ
         PeraVertex* mappedPera = nullptr;
@@ -1396,9 +1366,9 @@ namespace MyDX
 
     void Dx12Wrapper::CreateBokeParamResourcec()
     {
-        auto weights = GetGaussianWeight(8, 5.0f);
+        auto weights = Helper::GetGaussianWeight(8, 5.0f);
         auto heapProp = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-        auto resDesc = CD3DX12_RESOURCE_DESC::Buffer(AligmentedValue(sizeof(weights[0]) * weights.size(), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT));
+        auto resDesc = CD3DX12_RESOURCE_DESC::Buffer(Helper::AligmentedValue(sizeof(weights[0]) * weights.size(), D3D12_CONSTANT_BUFFER_DATA_PLACEMENT_ALIGNMENT));
         auto result = singleton->device->CreateCommittedResource(
             &heapProp,
             D3D12_HEAP_FLAG_NONE,
@@ -1407,7 +1377,7 @@ namespace MyDX
             nullptr,
             IID_PPV_ARGS(singleton->bokehParamResource.ReleaseAndGetAddressOf())
         );
-        CheckResult(result);
+        Helper::CheckResult(result);
 
         float* mappedWeight = nullptr;
         result = singleton->bokehParamResource->Map(0, nullptr, (void**)&mappedWeight);
@@ -1417,7 +1387,7 @@ namespace MyDX
 
     void Dx12Wrapper::DrawHorizontalBokeh()
     {
-        auto pCmd = singleton->graphicsCmdList;
+        auto pCmd = singleton->gcList;
         Barrier(singleton->peraReses[1].Get(),
             D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE,
             D3D12_RESOURCE_STATE_RENDER_TARGET
@@ -1472,13 +1442,13 @@ namespace MyDX
                 &clearValue,IID_PPV_ARGS(res.ReleaseAndGetAddressOf())
             );
             resDesc.Width >>= 1;
-            CheckResult(result);
+            Helper::CheckResult(result);
         }
     }
 
     void Dx12Wrapper::DrawShrinkTextureForBlur()
     {
-        auto pCmd = singleton->graphicsCmdList;
+        auto pCmd = singleton->gcList;
         pCmd->SetPipelineState(singleton->blurPSO.Get());
         pCmd->SetGraphicsRootSignature(singleton->peraRS.Get());
         // 頂点バッファ
@@ -1513,14 +1483,14 @@ namespace MyDX
         D3D12_RECT sr = {};
         vp.MaxDepth = 1.0f;
         vp.MinDepth = 0.0f;
-        vp.Height = desc.Height / 2;
-        vp.Width = desc.Width / 2;
+        vp.Height = desc.Height / 2.0f;
+        vp.Width = desc.Width / 2.0f;
         sr.top = 0;
         sr.left = 0;
         sr.right = vp.Width;
         sr.bottom = vp.Height;
 
-        auto weights = GetGaussianWeight(8, 5.0f);
+        auto weights = Helper::GetGaussianWeight(8, 5.0f);
 
         for (int i = 0; i < 8; ++i) 
         {
@@ -1553,12 +1523,12 @@ namespace MyDX
     void Dx12Wrapper::LoadShader(LPCWSTR _Path, ComPtr<ID3DBlob>& _Blob)
     {
         auto hr = D3DReadFileToBlob(_Path, _Blob.GetAddressOf());
-        CheckResult(hr);
+        Helper::CheckResult(hr);
     }
 
     void Dx12Wrapper::Barrier(ID3D12Resource* _P, D3D12_RESOURCE_STATES _Before, D3D12_RESOURCE_STATES _After)
     {
-        auto pCmd = singleton->graphicsCmdList;
+        auto pCmd = singleton->gcList;
         auto barrier = CD3DX12_RESOURCE_BARRIER::Transition(_P, _Before, _After, 0);
         pCmd->ResourceBarrier(1, &barrier);
     }

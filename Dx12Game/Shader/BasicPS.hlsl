@@ -55,8 +55,8 @@ PSOutput Basic(VSOutput input)
     if (sum >= 0.1f)
     {
         float4 grayScale = dot(BlurMap.Sample(ColorSmp, input.uv).rgb, float3(0.299, 0.587, 0.114));
-        //float4 bloom = grayScale * BaseColor;
-        float4 bloom = 0.15f * BaseColor;
+        //float4 bloom = grayScale * BaseColor; // テクスチャ情報から光り具合を設定する場合
+        float4 bloom = 0.15f * BaseColor;       // ブルームの光り具合を値で設定する場合
         output.highLum = bloom;
         output.highLum.a = 1.0f;
     }

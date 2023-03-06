@@ -137,7 +137,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Inc;$(ProjectDir)Source/GameObject/System;$(ProjectDir)Source/Component/System;$(ProjectDir)Source/Component;$(ProjectDir)Source/Scene/System;$(ProjectDir)Source/Scene;$(ProjectDir)Source/MyMgr;$(ProjectDir)Source/MyObj;$(ProjectDir)Source/System;$(ProjectDir)Source/Resource;$(ProjectDir)Source/GameObject;$(ProjectDir)Source/Game;$(ProjectDir)Source/State;$(ProjectDir)Source/DX12;$(ProjectDir)Source/DX12/TK;$(ProjectDir)Source/DX12/System</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Inc;$(ProjectDir)Source/DX12;$(ProjectDir)Source/DX12/Utility;$(ProjectDir)Source/GameSystem;$(ProjectDir)Source/GameSource;$(ProjectDir)Source/GameSource/Scene;$(ProjectDir)Source/GameSource/GameObject;$(ProjectDir)Source/GameSource/Component;$(ProjectDir)Source/System;$(ProjectDir)Source/Resource;$(ProjectDir)Source/Game;$(ProjectDir)Source/DX12/System;$(ProjectDir)Source/GameSystem/Utility;$(ProjectDir)Source/GameSystem/System;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -159,7 +159,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);NOMINMAX</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Inc;$(ProjectDir)Source/GameObject/System;$(ProjectDir)Source/Component/System;$(ProjectDir)Source/Component;$(ProjectDir)Source/Scene/System;$(ProjectDir)Source/Scene;$(ProjectDir)Source/MyMgr;$(ProjectDir)Source/MyObj;$(ProjectDir)Source/System;$(ProjectDir)Source/Resource;$(ProjectDir)Source/GameObject;$(ProjectDir)Source/Game;$(ProjectDir)Source/State;$(ProjectDir)Source/DX12;$(ProjectDir)Source/DX12/TK;$(ProjectDir)Source/DX12/System</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Inc;$(ProjectDir)Source/DX12;$(ProjectDir)Source/DX12/Utility;$(ProjectDir)Source/GameSystem;$(ProjectDir)Source/GameSource;$(ProjectDir)Source/GameSource/Scene;$(ProjectDir)Source/GameSource/GameObject;$(ProjectDir)Source/GameSource/Component;$(ProjectDir)Source/System;$(ProjectDir)Source/Resource;$(ProjectDir)Source/Game;$(ProjectDir)Source/DX12/System;$(ProjectDir)Source/GameSystem/Utility;$(ProjectDir)Source/GameSystem/System;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -176,39 +176,41 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="SOURCE\COMPONENT\SphereCollider.cpp" />
-    <ClCompile Include="Source\DX12\DX12Helper.cpp" />
-    <ClCompile Include="Source\GameObject\AvoidTracker.cpp" />
-    <ClCompile Include="Source\GameObject\BackgroundCube.cpp" />
-    <ClCompile Include="Source\GameObject\CubeGenerator.cpp" />
-    <ClCompile Include="Source\GameObject\Shield.cpp" />
-    <ClCompile Include="Source\GameObject\TitleUI.cpp" />
-    <ClCompile Include="Source\GameObject\Rader.cpp" />
-    <ClCompile Include="Source\GameObject\Boss.cpp" />
-    <ClCompile Include="Source\GameObject\LaserColl.cpp" />
-    <ClCompile Include="Source\GameObject\Laser.cpp" />
-    <ClCompile Include="Source\GameObject\ScoreUI.cpp" />
-    <ClCompile Include="Source\GameObject\ResultUI.cpp" />
-    <ClCompile Include="Source\GameObject\EnemyBullet.cpp" />
-    <ClCompile Include="Source\GameObject\EnemyMissile.cpp" />
-    <ClCompile Include="Source\DX12\TK\EfkMgr.cpp" />
-    <ClCompile Include="Source\DX12\TK\InputMgr.cpp" />
-    <ClCompile Include="Source\GameObject\EnemyMgr.cpp" />
-    <ClCompile Include="Source\GameObject\SelectUI.cpp" />
-    <ClCompile Include="Source\GameObject\ThroughEnemy.cpp" />
-    <ClCompile Include="Source\GameObject\SlowTracker.cpp" />
-    <ClCompile Include="Source\System\Helper\StringHelper.cpp" />
-    <ClCompile Include="Source\System\MyMath.cpp" />
-    <ClCompile Include="Source\State\BossStateEliminate.cpp" />
-    <ClCompile Include="Source\Scene\Stage.cpp" />
-    <ClCompile Include="Source\Resource\LineRes.cpp" />
-    <ClCompile Include="Source\System\GameMath.cpp" />
-    <ClCompile Include="Source\GameObject\BackgroundRect.cpp" />
-    <ClCompile Include="Source\GameObject\RectMgr.cpp" />
-    <ClCompile Include="Source\Game\Score.cpp" />
-    <ClCompile Include="Source\GameObject\Rander.cpp" />
-    <ClCompile Include="Source\App.cpp" />
-    <ClCompile Include="Source\System\ColliderMgr.cpp" />
+    <ClCompile Include="Source\GameSource\Component\CSphColl.cpp" />
+    <ClCompile Include="Source\DX12\Helper\DX12Helper.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\AvoidTracker.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\BackgroundCube.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\CubeGenerator.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\Shield.cpp" />
+    <ClCompile Include="Source\GameSystem\System\Tag.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\TitleUI.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\Rader.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\Boss.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\LaserColl.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\Laser.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\ScoreUI.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\ResultUI.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\EnemyBullet.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\EnemyMissile.cpp" />
+    <ClCompile Include="Source\DX12\Tool\EfkMgr.cpp" />
+    <ClCompile Include="Source\DX12\Tool\InputMgr.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\EnemyMgr.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\SelectUI.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\ThroughEnemy.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\SlowTracker.cpp" />
+    <ClCompile Include="Source\GameSystem\Utility\Logger.cpp" />
+    <ClCompile Include="Source\DX12\Utility\FileUtil.cpp" />
+    <ClCompile Include="Source\GameSystem\Helper\StringHelper.cpp" />
+    <ClCompile Include="Source\GameSystem\Utility\MyMath.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\State\BossStateEliminate.cpp" />
+    <ClCompile Include="Source\GameSource\Scene\Stage.cpp" />
+    <ClCompile Include="Source\DX12\Resource\LineRes.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\BackgroundRect.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\RectMgr.cpp" />
+    <ClCompile Include="Source\GameSource\Other\Score.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\Rander.cpp" />
+    <ClCompile Include="Source\GameSystem\App.cpp" />
+    <ClCompile Include="Source\GameSystem\System\ColliderMgr.cpp" />
     <ClCompile Include="Source\DX12\System\Camera.cpp" />
     <ClCompile Include="Source\DX12\System\ColorTarget.cpp" />
     <ClCompile Include="Source\DX12\System\CommandList.cpp" />
@@ -217,98 +219,95 @@
     <ClCompile Include="Source\DX12\System\DepthTarget.cpp" />
     <ClCompile Include="Source\DX12\System\DescriptorPool.cpp" />
     <ClCompile Include="Source\DX12\System\Fence.cpp" />
-    <ClCompile Include="Source\GameObject\Player.cpp" />
-    <ClCompile Include="Source\GameObject\Reverser.cpp" />
-    <ClCompile Include="Source\GameObject\Bullet.cpp" />
-    <ClCompile Include="Source\GameObject\System\MaterialMgr.cpp" />
-    <ClCompile Include="Source\DX12\TK\DXTK12Font.cpp" />
-    <ClCompile Include="Source\DX12\TK\Sound.cpp" />
-    <ClCompile Include="Source\System\FileUtil.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\Player.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\Reverser.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\Bullet.cpp" />
+    <ClCompile Include="Source\DX12\System\MaterialMgr.cpp" />
+    <ClCompile Include="Source\DX12\Tool\DXTK12Font.cpp" />
+    <ClCompile Include="Source\DX12\Tool\Sound.cpp" />
     <ClCompile Include="Source\DX12\System\IndexBuffer.cpp" />
     <ClCompile Include="Source\DX12\Resource\Material.cpp" />
     <ClCompile Include="Source\DX12\Resource\Mesh.cpp" />
-    <ClCompile Include="Source\DX12\System\ResMesh.cpp" />
+    <ClCompile Include="Source\DX12\Resource\ResMesh.cpp" />
     <ClCompile Include="Source\DX12\System\RootSignature.cpp" />
     <ClCompile Include="Source\DX12\Resource\Texture.cpp" />
     <ClCompile Include="Source\DX12\System\VertexBuffer.cpp" />
-    <ClCompile Include="Source\Scene\Select.cpp" />
-    <ClCompile Include="Source\Scene\Title.cpp" />
-    <ClCompile Include="Source\GameObject\System\GameObjectBase.cpp" />
-    <ClCompile Include="Source\GameObject\System\GameObjectMgr.cpp" />
-    <ClCompile Include="Source\GameObject\System\MeshMgr.cpp">
+    <ClCompile Include="Source\GameSource\Scene\Select.cpp" />
+    <ClCompile Include="Source\GameSource\Scene\Title.cpp" />
+    <ClCompile Include="Source\GameSystem\System\GameObjectBase.cpp" />
+    <ClCompile Include="Source\GameSystem\System\GameObjectMgr.cpp" />
+    <ClCompile Include="Source\DX12\System\MeshMgr.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Source\GameObject\System\Tag.cpp" />
-    <ClCompile Include="Source\System\Logger.cpp" />
-    <ClCompile Include="Source\main.cpp" />
-    <ClCompile Include="Source\Scene\System\SceneMgr.cpp" />
-    <ClCompile Include="Source\System\Timer.cpp" />
-    <ClCompile Include="Source\System\Tool\JsonLoader.cpp" />
-    <ClCompile Include="Source\System\Dir.cpp" />
-    <ClCompile Include="Source\System\Window.cpp" />
-    <ClCompile Include="Source\GameObject\Field.cpp" />
-    <ClCompile Include="Source\State\BossStatePhase2.cpp" />
-    <ClCompile Include="Source\State\BossStatePhase3.cpp" />
-    <ClCompile Include="Source\State\BossStatePhase4.cpp" />
-    <ClCompile Include="Source\State\BossStatePhase1.cpp" />
+    <ClCompile Include="Source\GameSystem\main.cpp" />
+    <ClCompile Include="Source\GameSystem\System\SceneMgr.cpp" />
+    <ClCompile Include="Source\GameSystem\System\Timer.cpp" />
+    <ClCompile Include="Source\GameSystem\Tool\JsonLoader.cpp" />
+    <ClCompile Include="Source\GameSystem\System\Window.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\Field.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\State\BossStatePhase2.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\State\BossStatePhase3.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\State\BossStatePhase4.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\State\BossStatePhase1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Resource\JsonData\Type.h" />
-    <ClInclude Include="Source\Component\CFixPos.h" />
-    <ClInclude Include="Source\Component\CPlayerShot.h" />
-    <ClInclude Include="Source\Component\CTracking.h" />
-    <ClInclude Include="Source\Component\CSpawn.h" />
-    <ClInclude Include="Source\Component\CLineMove.h" />
-    <ClInclude Include="Source\Component\CGenerator.h" />
-    <ClInclude Include="Source\Component\CMoveAimPos.h" />
-    <ClInclude Include="Source\Component\CRotYAimPos.h" />
-    <ClInclude Include="Source\Component\CMoveForwardY.h" />
-    <ClInclude Include="Source\Component\CTransformRingBuff.h" />
-    <ClInclude Include="Source\DX12\DX12Helper.h" />
-    <ClInclude Include="Source\GameObject\BackgroundCube.h" />
-    <ClInclude Include="Source\GameObject\BackgroundRect.h" />
-    <ClInclude Include="Source\GameObject\CubeGenerator.h" />
-    <ClInclude Include="Source\GameObject\RectMgr.h" />
-    <ClInclude Include="Source\Component\CPlayerMove.h" />
-    <ClInclude Include="Source\GameObject\AvoidTracker.h" />
-    <ClInclude Include="Source\GameObject\Boss.h" />
-    <ClInclude Include="Source\GameObject\LaserColl.h" />
-    <ClInclude Include="Source\GameObject\Laser.h" />
-    <ClInclude Include="Source\GameObject\Shield.h" />
-    <ClInclude Include="Source\GameObject\ScoreUI.h" />
-    <ClInclude Include="Source\GameObject\EnemyBullet.h" />
-    <ClInclude Include="Source\GameObject\EnemyMissile.h" />
-    <ClInclude Include="Source\Resource\MaterialType.h" />
-    <ClInclude Include="Source\Game\Score.h" />
-    <ClInclude Include="Source\GameObject\Rander.h" />
-    <ClInclude Include="Source\Resource\ScoreType.h" />
-    <ClInclude Include="Source\GameObject\TitleUI.h" />
-    <ClInclude Include="Source\GameObject\Rader.h" />
-    <ClInclude Include="Source\GameObject\ResultUI.h" />
-    <ClInclude Include="Source\DX12\TK\EfkMgr.h" />
-    <ClInclude Include="Source\DX12\TK\InputMgr.h" />
-    <ClInclude Include="Source\GameObject\EnemyMgr.h" />
-    <ClInclude Include="Source\GameObject\SelectUI.h" />
-    <ClInclude Include="Source\GameObject\ThroughEnemy.h" />
-    <ClInclude Include="Source\GameObject\SlowTracker.h" />
-    <ClInclude Include="Source\Resource\EfkType.h" />
-    <ClInclude Include="Source\Resource\SoundType.h" />
-    <ClInclude Include="Source\System\Helper\EnumIterator.h" />
-    <ClInclude Include="Source\System\Helper\StringHelper.h" />
-    <ClInclude Include="Source\System\MyMath.h" />
-    <ClInclude Include="Source\State\BossStateEliminate.h" />
-    <ClInclude Include="Source\State\BossStatePhase2.h" />
-    <ClInclude Include="Source\State\BossStatePhase3.h" />
-    <ClInclude Include="Source\State\BossStatePhase4.h" />
-    <ClInclude Include="Source\Scene\Stage.h" />
-    <ClInclude Include="Source\System\GameMath.h" />
-    <ClInclude Include="Source\App.h" />
-    <ClInclude Include="Source\Component\SphereCollider.h" />
-    <ClInclude Include="Source\System\ColliderMgr.h" />
-    <ClInclude Include="Source\Component\Transform.h" />
+    <ClInclude Include="Source\GameSource\Component\CRestrictRect.h" />
+    <ClInclude Include="Source\GameSource\Component\CPlayerShot.h" />
+    <ClInclude Include="Source\GameSource\Component\CTracking.h" />
+    <ClInclude Include="Source\GameSource\Component\CSpawn.h" />
+    <ClInclude Include="Source\GameSource\Component\CLineMove.h" />
+    <ClInclude Include="Source\GameSource\Component\CGenerator.h" />
+    <ClInclude Include="Source\GameSource\Component\CMoveAimPos.h" />
+    <ClInclude Include="Source\GameSource\Component\CRotYAimPos.h" />
+    <ClInclude Include="Source\GameSource\Component\CMoveForwardY.h" />
+    <ClInclude Include="Source\GameSource\Component\CTransformRingBuff.h" />
+    <ClInclude Include="Source\DX12\Helper\DX12Helper.h" />
+    <ClInclude Include="Source\GameSource\GameObject\BackgroundCube.h" />
+    <ClInclude Include="Source\GameSource\GameObject\BackgroundRect.h" />
+    <ClInclude Include="Source\GameSource\GameObject\CubeGenerator.h" />
+    <ClInclude Include="Source\GameSource\GameObject\RectMgr.h" />
+    <ClInclude Include="Source\GameSource\Component\CPlayerMove.h" />
+    <ClInclude Include="Source\GameSource\GameObject\AvoidTracker.h" />
+    <ClInclude Include="Source\GameSource\GameObject\Boss.h" />
+    <ClInclude Include="Source\GameSource\GameObject\LaserColl.h" />
+    <ClInclude Include="Source\GameSource\GameObject\Laser.h" />
+    <ClInclude Include="Source\GameSource\GameObject\Shield.h" />
+    <ClInclude Include="Source\GameSource\GameObject\ScoreUI.h" />
+    <ClInclude Include="Source\GameSource\GameObject\EnemyBullet.h" />
+    <ClInclude Include="Source\GameSource\GameObject\EnemyMissile.h" />
+    <ClInclude Include="Source\GameSystem\Utility\Logger.h" />
+    <ClInclude Include="Source\GameSource\Resource\MaterialType.h" />
+    <ClInclude Include="Source\GameSource\Other\Score.h" />
+    <ClInclude Include="Source\GameSource\GameObject\Rander.h" />
+    <ClInclude Include="Source\GameSource\Resource\ScoreType.h" />
+    <ClInclude Include="Source\GameSource\GameObject\TitleUI.h" />
+    <ClInclude Include="Source\GameSource\GameObject\Rader.h" />
+    <ClInclude Include="Source\GameSource\GameObject\ResultUI.h" />
+    <ClInclude Include="Source\DX12\Tool\EfkMgr.h" />
+    <ClInclude Include="Source\DX12\Tool\InputMgr.h" />
+    <ClInclude Include="Source\GameSource\GameObject\EnemyMgr.h" />
+    <ClInclude Include="Source\GameSource\GameObject\SelectUI.h" />
+    <ClInclude Include="Source\GameSource\GameObject\ThroughEnemy.h" />
+    <ClInclude Include="Source\GameSource\GameObject\SlowTracker.h" />
+    <ClInclude Include="Source\GameSource\Resource\EfkType.h" />
+    <ClInclude Include="Source\GameSource\Resource\SoundType.h" />
+    <ClInclude Include="Source\DX12\Utility\FileUtil.h" />
+    <ClInclude Include="Source\GameSystem\Utility\EnumIterator.h" />
+    <ClInclude Include="Source\GameSystem\Helper\StringHelper.h" />
+    <ClInclude Include="Source\GameSystem\Utility\MyMath.h" />
+    <ClInclude Include="Source\GameSource\GameObject\State\BossStateEliminate.h" />
+    <ClInclude Include="Source\GameSource\GameObject\State\BossStatePhase2.h" />
+    <ClInclude Include="Source\GameSource\GameObject\State\BossStatePhase3.h" />
+    <ClInclude Include="Source\GameSource\GameObject\State\BossStatePhase4.h" />
+    <ClInclude Include="Source\GameSource\Scene\Stage.h" />
+    <ClInclude Include="Source\GameSystem\App.h" />
+    <ClInclude Include="Source\GameSource\Component\CSphColl.h" />
+    <ClInclude Include="Source\GameSystem\System\ColliderMgr.h" />
+    <ClInclude Include="Source\GameSource\Component\CTransform.h" />
     <ClInclude Include="Source\DX12\System\Camera.h" />
     <ClInclude Include="Source\DX12\System\ColorTarget.h" />
     <ClInclude Include="Source\DX12\System\CommandList.h" />
@@ -318,17 +317,16 @@
     <ClInclude Include="Source\DX12\System\DepthTarget.h" />
     <ClInclude Include="Source\DX12\System\DescriptorPool.h" />
     <ClInclude Include="Source\DX12\System\Fence.h" />
-    <ClInclude Include="Source\GameObject\Player.h" />
-    <ClInclude Include="Source\GameObject\Reverser.h" />
-    <ClInclude Include="Source\GameObject\Bullet.h" />
-    <ClInclude Include="Source\GameObject\System\MaterialMgr.h" />
-    <ClInclude Include="Source\DX12\TK\DXTK12Font.h" />
-    <ClInclude Include="Source\DX12\TK\Sound.h" />
-    <ClInclude Include="Source\Resource\MeshType.h" />
-    <ClInclude Include="Source\Resource\LineRes.h" />
-    <ClInclude Include="Source\System\FileUtil.h" />
+    <ClInclude Include="Source\GameSource\GameObject\Player.h" />
+    <ClInclude Include="Source\GameSource\GameObject\Reverser.h" />
+    <ClInclude Include="Source\GameSource\GameObject\Bullet.h" />
+    <ClInclude Include="Source\DX12\System\MaterialMgr.h" />
+    <ClInclude Include="Source\DX12\Tool\DXTK12Font.h" />
+    <ClInclude Include="Source\DX12\Tool\Sound.h" />
+    <ClInclude Include="Source\GameSource\Resource\MeshType.h" />
+    <ClInclude Include="Source\DX12\Resource\LineRes.h" />
     <ClInclude Include="Source\DX12\System\IndexBuffer.h" />
-    <ClInclude Include="Source\System\Helper\InlineUtility.h" />
+    <ClInclude Include="Source\DX12\Utility\InlineUtility.h" />
     <ClInclude Include="Source\DX12\Resource\Material.h" />
     <ClInclude Include="Source\DX12\Resource\Mesh.h" />
     <ClInclude Include="Source\DX12\System\Pool.h" />
@@ -336,28 +334,26 @@
     <ClInclude Include="Source\DX12\System\RootSignature.h" />
     <ClInclude Include="Source\DX12\Resource\Texture.h" />
     <ClInclude Include="Source\DX12\System\VertexBuffer.h" />
-    <ClInclude Include="Source\Scene\Select.h" />
-    <ClInclude Include="Source\Scene\Title.h" />
-    <ClInclude Include="Source\Component\System\ComponentBase.h" />
-    <ClInclude Include="Source\GameObject\System\GameObjectBase.h" />
-    <ClInclude Include="Source\GameObject\System\GameObjectMgr.h" />
-    <ClInclude Include="Source\GameObject\System\MeshMgr.h">
+    <ClInclude Include="Source\GameSource\Scene\Select.h" />
+    <ClInclude Include="Source\GameSource\Scene\Title.h" />
+    <ClInclude Include="Source\GameSystem\System\ComponentBase.h" />
+    <ClInclude Include="Source\GameSystem\System\GameObjectBase.h" />
+    <ClInclude Include="Source\GameSystem\System\GameObjectMgr.h" />
+    <ClInclude Include="Source\DX12\System\MeshMgr.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="Source\GameObject\System\Tag.h" />
-    <ClInclude Include="Source\System\Logger.h" />
-    <ClInclude Include="Source\Scene\System\SceneBase.h" />
-    <ClInclude Include="Source\Scene\System\SceneMgr.h" />
-    <ClInclude Include="Source\System\Timer.h" />
-    <ClInclude Include="Source\System\Tool\JsonLoader.h" />
-    <ClInclude Include="Source\System\Dir.h" />
-    <ClInclude Include="Source\System\Window.h" />
-    <ClInclude Include="Source\GameObject\Field.h" />
-    <ClInclude Include="Source\State\BossStateBase.h" />
-    <ClInclude Include="Source\State\BossStatePhase1.h" />
+    <ClInclude Include="Source\GameSystem\System\Tag.h" />
+    <ClInclude Include="Source\GameSystem\System\SceneBase.h" />
+    <ClInclude Include="Source\GameSystem\System\SceneMgr.h" />
+    <ClInclude Include="Source\GameSystem\System\Timer.h" />
+    <ClInclude Include="Source\GameSystem\Tool\JsonLoader.h" />
+    <ClInclude Include="Source\GameSystem\System\Window.h" />
+    <ClInclude Include="Source\GameSource\GameObject\Field.h" />
+    <ClInclude Include="Source\GameSource\GameObject\State\BossStateBase.h" />
+    <ClInclude Include="Source\GameSource\GameObject\State\BossStatePhase1.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -463,7 +459,7 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Bump</EntryPointName>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Bump</EntryPointName>
     </FxCompile>
-    <FxCompile Include="Shader\ColorVS.hlsl">
+    <FxCompile Include="Shader\GeometryVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
@@ -473,7 +469,7 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometory</EntryPointName>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Geometory</EntryPointName>
     </FxCompile>
-    <FxCompile Include="Shader\ColorPS.hlsl">
+    <FxCompile Include="Shader\GeometryPS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
