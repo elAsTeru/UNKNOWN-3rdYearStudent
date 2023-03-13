@@ -99,7 +99,7 @@ namespace GameObject
 
 	bool EnemyMgr::Load(std::string _JsonFilePath)
 	{
-		auto data = System::Tool::LoadJson(_JsonFilePath.c_str());
+		auto data = Sys::Tool::LoadJson(_JsonFilePath.c_str());
 
 		size_t phase = data.MemberCount();		// フェーズ数
 		enemyData.reserve(phase);				// フェーズ数分のメモリ確保

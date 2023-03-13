@@ -82,7 +82,7 @@ namespace Effect
 		InitDX12Renderer();
 
 
-		auto data = System::Tool::LoadJson("Resource/JsonData/EfkData.json");
+		auto data = Sys::Tool::LoadJson("Resource/JsonData/EfkData.json");
 
 		// エフェクト読み込み
 		typedef EnumIterator < Res::EfkType, Res::EfkType::Begin, Res::EfkType::End > typeIte;

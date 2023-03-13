@@ -158,7 +158,7 @@ namespace MyDX
 
 	void MeshMgr::Init()
 	{
-		auto data = System::Tool::LoadJson("Resource/JsonData/MeshData.json");
+		auto data = Sys::Tool::LoadJson("Resource/JsonData/MeshData.json");
 
 		// メモリ予約
 		singleton->meshes.reserve(data.MemberCount());
@@ -168,13 +168,17 @@ namespace MyDX
 		// 2重ロードチェック後、データ読み込みを行う
 		for (auto ite = typeItr(); ite != typeItr(Res::MeshType::End); ++ite)
 		{
-			const std::string tempId = std::to_string(ite.GetId());
-			const char* path = data[tempId.c_str()].GetString();
+			std::string tempKey = std::to_string(ite.GetId());
+			const char* key = tempKey.c_str();
+
+			const char* path = data[key].GetString();
 
 			for (auto ite2 = typeItr(); ite2 != typeItr(Res::MeshType::End); ++ite2)
 			{
-				const std::string tempId2 = std::to_string(ite2.GetId());
-				const char* path2 = data[tempId2.c_str()].GetString();
+				tempKey = std::to_string(ite2.GetId());
+				const char* key2 = tempKey.c_str();
+
+				const char* path2 = data[key2].GetString();
 
 				if (path == path2 && ite != ite2)
 				{

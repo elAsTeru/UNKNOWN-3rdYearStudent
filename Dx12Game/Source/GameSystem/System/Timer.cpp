@@ -1,9 +1,10 @@
 ﻿#include "Timer.h"
-#include "Logger.h"
+#include <Logger.h>
 
 namespace Sys
 {
-	using namespace std::chrono;
+	using std::chrono::system_clock;
+	using std::chrono::microseconds;
 
 	Timer* Timer::singleton = nullptr; // Timerクラスの実体
 
@@ -14,6 +15,7 @@ namespace Sys
 		Delay(1.0f),
 		MixSpeed(0.1f),
 		MaxSpeed(0.5f),
+		MaxDeltaTime(0.1f),
 		Duration(3.0f),
 		timeCounter(Delay + Duration),
 		hitStopTime(0.0f)
@@ -54,21 +56,9 @@ namespace Sys
 	// フレームの処理時間、計測開始
 	void Timer::Update()
 	{
-		// 前回の時刻を記録し、最新時刻を更新
-		system_clock::time_point prevTime = singleton->currentTime;
-		singleton->currentTime = system_clock::now();
-		// 1ループの処理かかった時間を求め、デルタタイムに変換
-		system_clock::duration elapsedTime = singleton->currentTime - prevTime;
-		singleton->deltaTime = duration_cast<microseconds>(elapsedTime).count() / 1000000.0f;
+		singleton->CalcDeltaTime();
+		singleton->FixDeltaTime();
 
-		// １ループに時間がかかりすぎていたら、補正する
-		if (singleton->deltaTime >= 0.1f)
-		{
-			OutputLog("Fix deltaTime 0.1 \n");
-			singleton->deltaTime = 0.1f;
-		}
-		// 出来れば、平均を記録しておき、平均から突然超えるものがあった場合はログに伝えて、
-		// デルタタイムを平均値にしておく
 
 		// 仮置きhitstop処理
 		// 計測時間が持続時間を超えてなければ
@@ -92,6 +82,36 @@ namespace Sys
 	void Timer::RunHitStop()
 	{
 		singleton->timeCounter = 0;
+	}
+
+	void Timer::CalcDeltaTime()
+	{
+		// 前回の時刻を記録し、最新時刻を更新
+		system_clock::time_point prevTime = singleton->currentTime;
+		singleton->currentTime = system_clock::now();
+		// 1ループの処理かかった時間を求め、デルタタイムに変換
+		system_clock::duration elapsedTime = singleton->currentTime - prevTime;
+		// 1ループの処理時間が短い場合、sec・milSecだと0秒になる可能性があるので、micSecに経過時間を変換後、secに変換する
+		singleton->deltaTime = duration_cast<microseconds>(elapsedTime).count();
+		singleton->MicSecToSec(singleton->deltaTime);
+	}
+
+	void Timer::MicSecToSec(float& _MicSec)
+	{
+		_MicSec /= 1000000.0f;
+	}
+
+	void Timer::FixDeltaTime()
+	{
+		// １ループに時間がかかりすぎていたら、補正する
+		if (singleton->deltaTime >= singleton->MaxDeltaTime)
+		{
+			DLOG("Warning : Fix deltaTime %.1f", singleton->MaxDeltaTime);
+			singleton->deltaTime = singleton->MaxDeltaTime;
+		}
+
+		// 細かく必要になったら、平均を記録して突然超えるものがあった場合、
+		// ログに表示して、デルタタイムを平均値に補正するようにする。
 	}
 
 	//void Timer::Wait(const int& _MilliSecond)

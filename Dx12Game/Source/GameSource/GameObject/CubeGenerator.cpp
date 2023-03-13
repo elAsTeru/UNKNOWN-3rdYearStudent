@@ -24,7 +24,7 @@ namespace GameObject
 		// 外で設定
 		// 発生コンポーネントの初期化
 		this->cGenerator->Init();
-		this->cGenerator->ObjName = "BackgroundCube";
+		this->cGenerator->objName = "BackgroundCube";
 		this->cGenerator->interval = 0.2f;
 	}
 

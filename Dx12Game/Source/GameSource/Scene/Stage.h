@@ -18,13 +18,10 @@ namespace Scene
 		virtual ~Stage();
 		
 		//Public Method
-
-		/// <summary>
-		/// この中にゲームの処理を書く
-		/// </summary>
-		/// <returns>次のシーンのポインタ</returns>
-		virtual void Update()override;
+		
+		void Update()override;
 		void SetStage(std::string _FilePath);
+
 	private:
 		enum class State
 		{
@@ -36,7 +33,6 @@ namespace Scene
 		State state;
 
 		// Private Variable
-		int bgmHandle;
 		GameObject::EnemyMgr* enemyMgr;
 		float timeCounter;						// タイトルシーン用のタイマー
 		GameObject::Field* field;

@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <chrono>
+#include <vector>
 
 namespace Sys
 {
@@ -39,11 +40,22 @@ namespace Sys
 		std::chrono::system_clock::time_point currentTime;	// 最新時刻
 		float deltaTime;									// 前回のループにかかった時間
 
-		const float Delay;		// 停止時間
-		const float MixSpeed;	// スロー時間の最小スピード	
-		const float MaxSpeed;	// スロー時間の最大スピード
-		const float Duration;	// スロー時間
+		const float Delay;			// 停止時間
+		const float MixSpeed;		// スロー時間の最小スピード	
+		const float MaxSpeed;		// スロー時間の最大スピード
+		const float Duration;		// スロー時間
+		const float MaxDeltaTime;	// デルタタイムの上限値
 		float timeCounter;
 		float hitStopTime;
+
+
+		// Private Method
+
+		/// <summary> デルタタイム計算 </summary>
+		void CalcDeltaTime();
+		/// <summary> マイクロ秒→秒 </summary>
+		void MicSecToSec(float& _MicSec);
+		/// <summary> DeltaTimeを補正 </summary>
+		void FixDeltaTime();
 	};
 }

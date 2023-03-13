@@ -16,7 +16,6 @@ namespace Scene
 
 	Title::Title() :
 		Base("Title"),
-		bgmHandle(-1),
 		enemyMgr(nullptr),
 		titleTimer(0),
 		field(nullptr)
@@ -36,8 +35,21 @@ namespace Scene
 
 		field = new GameObject::Field;
 
+
+		struct Line
+		{
+			Vector3 p1;
+			Vector3 p2;
+		};
+		// 開始地点が被らないように値を設定
+		Line lines[] =
+		{
+			{Vector3(-42, -500, -28),Vector3(42, -500, -28) },
+			{Vector3(42, -500, 28),Vector3(-42, -500, 28)},
+			{Vector3(-42, -500, 28),Vector3(-42, -500, -28)}
+		};
 		// 背景設定
-		for (int i = 0; i < 3; ++i)
+		for (int i = 0; i < sizeof(lines) / sizeof(Line); ++i)
 		{
 			auto cubeGen = static_cast<GameObject::CubeGenerator*>(GameObject::Mgr::FindDeactiveObj("CubeGenerator"));
 			cubeGen->cLineMove->Init();
@@ -53,24 +65,7 @@ namespace Scene
 				cubeGen->cLineMove->maxDiv = 18 - 1;
 			}
 
-			// 開始地点を被らないようにする
-			switch (i)
-			{
-			case 0:
-				// 下 // 左から右
-				cubeGen->cLineMove->p1 = Vector3(-42, -500, -28);
-				cubeGen->cLineMove->p2 = Vector3(42, -500, -28);
-				break;
-			case 1:
-				// 上 // 右から左
-				cubeGen->cLineMove->p1 = Vector3(42, -500, 28);
-				cubeGen->cLineMove->p2 = Vector3(-42, -500, 28);
-				break;
-			case 2:
-				// 左 // 上から下
-				cubeGen->cLineMove->p1 = Vector3(-42, -500, 28);
-				cubeGen->cLineMove->p2 = Vector3(-42, -500, -28);
-			}
+			cubeGen->cLineMove->SetLine(lines[i].p1, lines[i].p2);
 			cubeGen->SetActive(true);
 		}
 

@@ -178,10 +178,12 @@
   <ItemGroup>
     <ClCompile Include="Source\GameSource\Component\CSphColl.cpp" />
     <ClCompile Include="Source\DX12\Helper\DX12Helper.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\Board.cpp" />
     <ClCompile Include="Source\GameSource\GameObject\AvoidTracker.cpp" />
     <ClCompile Include="Source\GameSource\GameObject\BackgroundCube.cpp" />
     <ClCompile Include="Source\GameSource\GameObject\CubeGenerator.cpp" />
     <ClCompile Include="Source\GameSource\GameObject\Shield.cpp" />
+    <ClCompile Include="Source\GameSource\GameObject\ScreenStrip.cpp" />
     <ClCompile Include="Source\GameSystem\System\Tag.cpp" />
     <ClCompile Include="Source\GameSource\GameObject\TitleUI.cpp" />
     <ClCompile Include="Source\GameSource\GameObject\Rader.cpp" />
@@ -266,6 +268,7 @@
     <ClInclude Include="Source\GameSource\Component\CMoveForwardY.h" />
     <ClInclude Include="Source\GameSource\Component\CTransformRingBuff.h" />
     <ClInclude Include="Source\DX12\Helper\DX12Helper.h" />
+    <ClInclude Include="Source\GameSource\GameObject\Board.h" />
     <ClInclude Include="Source\GameSource\GameObject\BackgroundCube.h" />
     <ClInclude Include="Source\GameSource\GameObject\BackgroundRect.h" />
     <ClInclude Include="Source\GameSource\GameObject\CubeGenerator.h" />
@@ -279,6 +282,8 @@
     <ClInclude Include="Source\GameSource\GameObject\ScoreUI.h" />
     <ClInclude Include="Source\GameSource\GameObject\EnemyBullet.h" />
     <ClInclude Include="Source\GameSource\GameObject\EnemyMissile.h" />
+    <ClInclude Include="Source\GameSource\GameObject\ScreenStrip.h" />
+    <ClInclude Include="Source\GameSource\Resource\SceneFontData.h" />
     <ClInclude Include="Source\GameSystem\Utility\Logger.h" />
     <ClInclude Include="Source\GameSource\Resource\MaterialType.h" />
     <ClInclude Include="Source\GameSource\Other\Score.h" />

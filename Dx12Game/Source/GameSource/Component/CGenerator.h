@@ -34,7 +34,7 @@ namespace Component
 			{
 				this->timeCounter = 0;
 				// 対象のオブジェクトを探索し、初期化後、親の座標をセットする
-				if (GameObject::Base* obj = GameObject::Mgr::FindDeactiveObj(this->ObjName); obj)
+				if (GameObject::Base* obj = GameObject::Mgr::FindDeactiveObj(this->objName); obj)
 				{
 					obj->Init();
 					obj->transform->position = this->parent->transform->position;

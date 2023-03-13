@@ -1,6 +1,7 @@
 ﻿#include "RectMgr.h"
 #include <cmath>
 #include "GameObjectMgr.h"
+#include "MyMath.h"
 
 namespace GameObject
 {
@@ -83,7 +84,7 @@ namespace GameObject
 			// 手前から設置されて行ってるので段々と小さくなる処理
 			if (pool[i]->transform->position.y < 0.0f)
 			{
-				float mag = this->GetFadeOutMagnification(-pool[i]->transform->position.y, DistDepth * pool_size, 0.2f, 1.0f);
+				float mag = MyMath::GetFadeOutMag(-pool[i]->transform->position.y, DistDepth * pool_size, 0.2f, 1.0f);
 
 				pool[i]->transform->scale.x = MaxScaleWidth * mag;
 				pool[i]->transform->scale.z = MaxScaleHeight * mag;
@@ -108,24 +109,5 @@ namespace GameObject
 
 			((pool_size - i) / pool_size);
 		}
-	}
-
-	float RectMgr::GetFadeInMagnification(const float& _Value, const float& _MaxValue, const float& _MinRange, const float& _MaxRange)const
-	{
-		float mag = _Value / _MaxValue;	// 0~1に補正
-		// 指定した範囲の値に補正
-		mag *= (_MaxRange - _MinRange) + _MinRange;
-
-		return mag;
-	}
-	float RectMgr::GetFadeOutMagnification(const float& _Value, const float& _MaxValue, const float& _MinRange, const float& _MaxRange) const
-	{
-		float mag = _Value / _MaxValue;	// 0~1に補正
-		// フェードイン処理の倍率を反転することでフェードアウト処理になる
-		mag = 1.0f - mag;
-		// 指定した範囲の値に補正
-		mag *= (_MaxRange - _MinRange) + _MinRange;
-
-		return mag;
 	}
 }

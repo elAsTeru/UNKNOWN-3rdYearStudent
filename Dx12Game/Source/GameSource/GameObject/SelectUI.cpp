@@ -1,11 +1,10 @@
 ﻿#include "SelectUI.h"
 #include "Dx12Wrapper.h"
 #include "Tool/InputMgr.h"
-#include "Logger.h"
 #include "Tool/DXTK12Font.h"
+#include "Resource/SceneFontData.h"
 
-static constexpr XMVECTOR COLOR_ORANGE = { 1, 0.65f, 0, 0.1f };
-static constexpr XMVECTOR COLOR_PURPLE = { 0.20f, 0.15f, 0.25f, 1.0f };
+#include "GameObject/ScreenStrip.h"
 
 namespace GameObject
 {
@@ -24,6 +23,10 @@ namespace GameObject
 		state(State::In),
 		ExitSceneTime(30.0f)
 	{
+		this->strip = new ScreenStrip;
+		this->strip->Init();
+		this->strip->SetDist(1.25f);
+		this->strip->SetAlpha(0.4f);
 	}
 
 	SelectUI::~SelectUI()
@@ -132,13 +135,13 @@ namespace GameObject
 		// 左、中央、右の３つの枠を表示
 		for (int i = 0; i < 3; ++i)
 		{
-			DirectX::XMFLOAT4 color{ 51 / 255.0f,38 / 255.0f,64 / 255.0f,1 };
+			DirectX::XMFLOAT4 lineColor{ 51 / 255.0f,38 / 255.0f,64 / 255.0f,1 };
 			float expansion = -0.05f;	// 中枠に足される拡大率
 
 			// 選択されている枠に変化をつける
 			if ((this->state == State::Idol) && (i == this->selectNum))
 			{
-				color = { 25 / 255.0f,1, 9 / 255.0f,1 };
+				lineColor = { 25 / 255.0f,1, 9 / 255.0f,1 };
 				expansion = +0.05f;
 			}
 
@@ -149,7 +152,7 @@ namespace GameObject
 				DirectX::XMMATRIX matrix
 					= Matrix::CreateScale(this->BaseScale.x * magnification, 1, this->BaseScale.y * magnification)
 					* Matrix::CreateTranslation(rectPos[i]);
-				MyDX::Dx12Wrapper::DrawRect(matrix, color);
+				MyDX::Dx12Wrapper::DrawRect(matrix, lineColor);
 			}
 
 		}
@@ -163,46 +166,37 @@ namespace GameObject
 			MyDX::Dx12Wrapper::DrawRect(matrix, { 25.0f / 255.0f,1, 9.0f / 255.0f,1 });
 		}
 
-		// 文字の表示
+		// 上下の帯表示
+		this->strip->SetDist(1.25f + (0.2f * this->expan) - 0.2f);
+		this->strip->Draw();
+
+		// FontDataを描画する
+		for (const auto& font : Res::fontData[Res::FontType::Select])
 		{
-			MyDX::DXTK12Font::DrawFont({ L"ステージ選択", DirectX::XMFLOAT2(650, 210 - (100 * this->expan) + 100), COLOR_PURPLE,{},{},1 });
-			MyDX::DXTK12Font::DrawFont({ L"ステージ選択", DirectX::XMFLOAT2(645, 205 - (100 * this->expan) + 100), COLOR_ORANGE,{},{},1.02f });
-
-			MyDX::DXTK12Font::DrawFont({ L"ステージ 1", DirectX::XMFLOAT2(350, 670 + (100 * this->expan) - 100), COLOR_PURPLE,{},{},0.5f });
-			MyDX::DXTK12Font::DrawFont({ L"ステージ 2", DirectX::XMFLOAT2(830, 670 + (100 * this->expan) - 100), COLOR_PURPLE,{},{},0.5f });
-			MyDX::DXTK12Font::DrawFont({ L"ステージ 3", DirectX::XMFLOAT2(1310, 670 + (100 * this->expan) - 100), COLOR_PURPLE,{},{},0.5f });
-
-			if (state == State::Idol)
+			// 選択したステージにオレンジ色の文字を上乗せする
+			if (this->state == State::Idol
+				&& font.color == TransOrange
+				&& font.str.starts_with(L"ステージ ")
+				&& !font.str.ends_with(std::to_wstring(this->selectNum + 1)))
 			{
-				// 選択されている文字の上にオレンジ色の文字を表示する
-				switch (this->selectNum) {
-				case 0:
-					MyDX::DXTK12Font::DrawFont({ L"ステージ 1", DirectX::XMFLOAT2(344, 670), COLOR_ORANGE,{},{},0.52f });
-					break;
-				case 1:
-					MyDX::DXTK12Font::DrawFont({ L"ステージ 2", DirectX::XMFLOAT2(824, 670), COLOR_ORANGE,{},{},0.52f });
-					break;
-				case 2:
-					MyDX::DXTK12Font::DrawFont({ L"ステージ 3", DirectX::XMFLOAT2(1304, 670), COLOR_ORANGE,{},{},0.52f });
-					break;
-				}
+				continue;
 			}
+
+			// fontの位置を移動させるための仮変数
+			MyDX::FontData temp = font;
+			// 座標が画面半分より上なら、上から下へスライドして出てくる
+			if (font.pos.y <= 540)
+			{
+				temp.pos.y = font.pos.y - (100 * this->expan) + 100;
+			}
+			else
+			{
+				temp.pos.y = font.pos.y + (100 * this->expan) - 100;
+			}
+
+			// 描画
+			MyDX::DXTK12Font::DrawFont(temp);
 		}
-
-		// 上から下
-		XMMATRIX matrix
-			= Matrix::CreateTranslation(0, 0, 1.25f + (0.2f * this->expan) - 0.2f);
-		MyDX::Dx12Wrapper::DrawMesh2D(matrix,Res::MeshType::Board,Res::MaterialType::Gray,0.4f);
-		
-		MyDX::DXTK12Font::DrawFont({ L"UNKNOWN", DirectX::XMFLOAT2(140, 2 - (100 * this->expan) + 100), COLOR_ORANGE,{},{},1 });
-		MyDX::DXTK12Font::DrawFont({ L"㊂", DirectX::XMFLOAT2(1750, 2 - (100 * this->expan) + 100), COLOR_ORANGE,{},{},1 });
-
-		// 下から上
-		matrix
-			= Matrix::CreateTranslation(0,0,-1.25f - (0.2f * this->expan) + 0.2f);
-		MyDX::Dx12Wrapper::DrawMesh2D(matrix,Res::MeshType::Board,Res::MaterialType::Gray,0.4f);
-
-		MyDX::DXTK12Font::DrawFont({ L"⇦ 選択 ⇨　Ⓐ 決定", DirectX::XMFLOAT2(140, 970 + (100 * this->expan) - 100), COLOR_ORANGE,{},{},0.5f });
 	}
 
 	void SelectUI::UpdateSelectNum()

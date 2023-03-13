@@ -4,7 +4,7 @@
 #include <Rapidjson/error/en.h>
 #include <iostream>
 
-namespace System::Tool
+namespace Sys::Tool
 {
     rapidjson::Document LoadJson(const char* _Path)
     {

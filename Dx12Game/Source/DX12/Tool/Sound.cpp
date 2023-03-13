@@ -72,7 +72,7 @@ namespace MyDX::Tool
 	void Sound::LoadSE()
 	{
 		// SEデータJSON読み込み
-		auto data = System::Tool::LoadJson("Resource/JsonData/SEData.json");
+		auto data = Sys::Tool::LoadJson("Resource/JsonData/SEData.json");
 
 		// メモリ予約
 		auto dataNum = data.MemberCount();
@@ -114,7 +114,7 @@ namespace MyDX::Tool
 	void Sound::LoadBGM()
 	{
 		// BGMデータJSON読み込み
-		auto data = System::Tool::LoadJson("Resource/JsonData/BGMData.json");
+		auto data = Sys::Tool::LoadJson("Resource/JsonData/BGMData.json");
 
 		// メモリ予約
 		auto dataNum = data.MemberCount();

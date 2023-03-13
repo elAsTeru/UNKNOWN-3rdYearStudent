@@ -11,7 +11,7 @@ namespace GameObject
         RectMgr();
         ~RectMgr();
         // Public Method
-        void Init(){}
+        void Init() {}
         void Update()override;
         void Draw()const override;
 
@@ -34,21 +34,5 @@ namespace GameObject
         /// 四角を初期設定(位置,拡大率)にする
         /// </summary>
         void InitRects();
-
-        /// <summary> 値が大きくなるにつれ倍率が高くなる処理、現在の値から指定した範囲の倍率を取得 </summary>
-        /// <param name="_Value">現在の値</param>
-        /// <param name="_MaxValue">最大値(最小値は0固定)</param>
-        /// <param name="_MinRange">最大倍率</param>
-        /// <param name="_MaxRange">最小倍率</param>
-        /// <returns></returns>
-        float GetFadeInMagnification(const float& _Value, const float& _MaxValue, const float& _MinRange, const float& _MaxRange)const;
-
-        /// <summary> 値が大きくなるにつれ倍率が小さくなる処理、現在の値から指定した範囲の倍率を取得 </summary>
-        /// <param name="_Value">現在の値</param>
-        /// <param name="_MaxValue">最大値(最小値は0固定)</param>
-        /// <param name="_MinRange">最大倍率</param>
-        /// <param name="_MaxRange">最小倍率</param>
-        /// <returns></returns>
-        float GetFadeOutMagnification(const float& _Value, const float& _MaxValue, const float& _MinRange, const float& _MaxRange)const;
     };
 }

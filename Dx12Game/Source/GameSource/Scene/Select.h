@@ -4,7 +4,6 @@
 namespace GameObject
 {
 	class SelectUI;
-	class MenuUI;
 }
 
 namespace Scene
@@ -16,11 +15,10 @@ namespace Scene
 		virtual ~Select();
 
 		//Public Method
-		virtual void Update()override;
+		void Update()override;
 
 	private:
 		// Private Variable
-		int bgmHandle;	// BGMのハンドル
 		GameObject::SelectUI* selectUI = nullptr;
 	};
 }

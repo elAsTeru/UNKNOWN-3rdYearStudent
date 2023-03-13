@@ -17,15 +17,10 @@ namespace Scene
 		
 		//Public Method
 
-		/// <summary>
-		/// この中にゲームの処理を書く
-		/// </summary>
-		/// <returns>次のシーンのポインタ</returns>
-		virtual void Update()override;
+		void Update()override;
 
 	private:
 		// Private Variable
-		int bgmHandle;
 
 		GameObject::EnemyMgr* enemyMgr;
 		double titleTimer;						// タイトルシーン用のタイマー

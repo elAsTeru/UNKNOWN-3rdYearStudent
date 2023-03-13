@@ -18,14 +18,21 @@ namespace Component
 			Random	// ランダム
 		};
 		// Public Variable
-		Vector3 p1;			// 開始位置
-		Vector3 p2;			// 目標位置
+
 		float duration;		// 片道の所要時間
 		MoveType type;		// 処理タイプ
 		uint16_t maxDiv;	// ランダム時分割の最大値
 		uint16_t minDiv;	// ランダム時分割の最小値
 
 		// Public Method
+
+		/// <summary> 線、二点の情報を設定する 線移動を行うために、二点の情報を設定する </summary>
+		void SetLine(Vector3 _P1, Vector3 _P2)
+		{
+			this->p1 = _P1;
+			this->p2 = _P2;
+		}
+
 		void Start()override 
 		{
 		};
@@ -70,6 +77,8 @@ namespace Component
 		}
 	private:
 		// Private Variable
+		Vector3 p1;			// 開始位置
+		Vector3 p2;			// 目標位置
 		float timeCounter;	// 時間計測カウンタ
 
 		// Private Method

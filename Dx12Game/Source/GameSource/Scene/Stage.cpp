@@ -17,7 +17,6 @@ namespace Scene
 {
 	Stage::Stage():
 		Base("Stage"),
-		bgmHandle(-1),
 		enemyMgr(nullptr),
 		timeCounter(0),
 		field(nullptr),
@@ -41,12 +40,26 @@ namespace Scene
 		player->transform->rotation = {};
 		player->SetActive(true);
 
-		for (int i = 0; i < 4; ++i)
+
+		struct Line
+		{
+			Vector3 p1;
+			Vector3 p2;
+		};
+		// 開始地点が被らないように値を設定
+		Line lines[] =
+		{
+			{Vector3(-42, -500, -28),Vector3(42, -500, -28)},
+			{Vector3(42, -500, 28),Vector3(-42, -500, 28)},
+			{Vector3(42, -500, -28),Vector3(42, -500, 28)},
+			{Vector3(-42, -500, 28),Vector3(-42, -500, -28)}
+		};
+		// 背景設定
+		for (int i = 0; i < sizeof(lines) / sizeof(Line); ++i)
 		{
 			auto cubeGen = static_cast<GameObject::CubeGenerator*>(GameObject::Mgr::FindDeactiveObj("CubeGenerator"));
 			cubeGen->cLineMove->Init();
 			cubeGen->cLineMove->duration = 10.0f;
-			//cubeGen->SetInterval(0.2f);	// 順列は0.5、ランダムは0.2
 			cubeGen->cLineMove->type = Component::CLineMove::MoveType::Random;
 			if (i <= 1)
 			{
@@ -61,29 +74,7 @@ namespace Scene
 				cubeGen->cLineMove->maxDiv = 18 - 1;
 			}
 
-			// 開始地点を被らないようにする
-			switch (i)
-			{
-			case 0:
-				// 下 // 左から右
-				cubeGen->cLineMove->p1 = Vector3(-42, -500, -28);
-				cubeGen->cLineMove->p2 = Vector3(42, -500, -28);
-				break;
-			case 1:
-				// 上 // 右から左
-				cubeGen->cLineMove->p1 = Vector3(42, -500, 28);
-				cubeGen->cLineMove->p2 = Vector3(-42, -500, 28);
-				break;
-			case 2:
-				// 右 // 下から上
-				cubeGen->cLineMove->p1 = Vector3(42, -500, -28);
-				cubeGen->cLineMove->p2 = Vector3(42, -500, 28);
-				break;
-			case 3:
-				// 左 // 上から下
-				cubeGen->cLineMove->p1 = Vector3(-42, -500, 28);
-				cubeGen->cLineMove->p2 = Vector3(-42, -500, -28);
-			}
+			cubeGen->cLineMove->SetLine(lines[i].p1, lines[i].p2);
 			cubeGen->SetActive(true);
 		}
 
@@ -103,6 +94,8 @@ namespace Scene
 
 	void Stage::Update()
 	{
+		this->state = State::Result;
+
 		this->timeCounter += Sys::Timer::GetDeltaTime();		// 経過時間
 
 		if (this->state == State::In)

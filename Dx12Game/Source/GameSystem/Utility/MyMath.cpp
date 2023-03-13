@@ -1,4 +1,5 @@
 ﻿#include "MyMath.h"
+#include <algorithm>
 
 namespace MyMath
 {
@@ -40,6 +41,10 @@ namespace MyMath
 
     float CircularMotion(float _MinRange, float _MaxRange, float _Time, float _MotionSpeed)
     {
+        // 値を0.0~1.0に収める
+        _MinRange = std::clamp(_MinRange, 0.0f, 1.0f);
+        _MaxRange = std::clamp(_MaxRange, 0.0f, 1.0f);
+
         float rangeWidth = _MaxRange - _MinRange;	// 範囲幅を求める
         float result = (0.5f * (std::cos(_Time * _MotionSpeed) + 1)) * rangeWidth + _MinRange;
         return result;
@@ -84,5 +89,25 @@ namespace MyMath
             return true;
         }
         return false;
+    } 
+
+
+    float GetFadeInMag(const float& _Value, const float& _MaxValue, const float& _MinRange, const float& _MaxRange)
+    {
+        float mag = _Value / _MaxValue;	// 0~1に補正
+        // 指定した範囲の値に補正
+        mag *= (_MaxRange - _MinRange) + _MinRange;
+
+        return mag;
+    }
+
+    float GetFadeOutMag(const float& _Value, const float& _MaxValue, const float& _MinRange, const float& _MaxRange)
+    {
+        float mag = _Value / _MaxValue;	// 0~1に補正
+        // 指定した範囲の値に補正
+        mag *= (_MaxRange - _MinRange) + _MinRange;
+
+        // 補正値を反転することで、フェードアウト処理になる
+        return _MaxRange - mag;
     }
 }

@@ -17,6 +17,7 @@ namespace Scene
 		virtual ~Base() = default;
 
 		//Public Method
+		/// <summary> シーンの更新処理 </summary>
 		virtual void Update() = 0;
 
 	protected:

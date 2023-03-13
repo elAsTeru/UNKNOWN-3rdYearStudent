@@ -3,6 +3,8 @@
 
 namespace GameObject
 {
+	class ScreenStrip;
+
 	class SelectUI : public Base
 	{
 	public:
@@ -42,5 +44,7 @@ namespace GameObject
 
 		const float ExitSceneTime;			// シーンを出るまでの時間
 		float noInputTime;					// 操作されてない時間
+
+		ScreenStrip* strip;
 	};
 }
